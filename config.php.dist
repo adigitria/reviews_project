@@ -1,0 +1,11 @@
+<?php
+
+return [
+    'headers' => [
+        'irecommend' => '',
+        'otzovik' => [
+            'user_agent' => '',
+            'cookie' => '',
+        ]
+    ]
+];

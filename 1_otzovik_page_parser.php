@@ -1,26 +1,29 @@
 <?php
-
 $config = require 'config.php';
 
-$basePage = 'https://otzovik.com';
-$baseSearchPage = 'https://otzovik.com/reviews/sotoviy_operator_tele2/%s/';
-$countPages = 140;
+$url = 'https://otzovik.com/reviews/sotoviy_operator_tele2/%PAGE_NUMBER%/';
+$agent = $config['headers']['otzovik']['user_agent'];
 
-$opts = [
-    'http' => [
-        'method' => 'GET',
-        'authority' => 'otzovik.com',
-        'scheme' => 'https',
-        'header' => $config['headers']['otzovik']
-    ]
-];
-$context = stream_context_create($opts);
+$ch = curl_init();
 
-$linksPattern = '/<a href=\"([^"]+)\" class=\"more\"><\/a>/';
 
-for ($i = 1; $i <= $countPages; $i++) {
+$count = 0;
+for ($i = 1; $i <= 143; $i++) {
+    $searchUrl = str_replace('%PAGE_NUMBER%', $i, $url);
 
-    $pageContent = file_get_contents(sprintf($baseSearchPage, (string)$i), false, $context);
-    file_put_contents('pages/otzovik/page_' . $i . '.html', $pageContent);
-    echo 'Download page - ' . $i . PHP_EOL;
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_VERBOSE, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_USERAGENT, $agent);
+    curl_setopt($ch, CURLOPT_COOKIE, $config['headers']['otzovik']['cookie']);
+    curl_setopt($ch, CURLOPT_URL, $searchUrl);
+
+    $result = curl_exec($ch);
+    file_put_contents('pages/otzovik/page_' . $i . '.html', $result);
+    $count++;
+    if ($count % 20 == 0) {
+        sleep(15);
+    }
 }
+
+curl_close($ch);
