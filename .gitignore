@@ -1,4 +1,5 @@
 pages/*/**.html
 results/*/**.json
 reviews/*/**.html
+archive/*/**.zip
 /config.php

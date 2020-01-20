@@ -40,7 +40,6 @@ class Configuration
     public function __construct(array $argv, array $config)
     {
         $this->config = $config;
-        var_dump($argv);
         $this->setParserAlias($argv);
         $this->setBaseSearchUrl($argv);
         $this->setCountPages($argv);
