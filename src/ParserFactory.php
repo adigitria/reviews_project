@@ -19,7 +19,7 @@ class ParserFactory
     public static function makeParser(string $alias, string $baseSearchUrl, int $countPages): ReviewParserInterface
     {
         if ($alias === self::BANKIRU_ALIAS) {
-            return new BankiParser();
+            return new BankiParser($baseSearchUrl,$countPages);
         } else if ($alias === self::IRECOMMEND_ALIAS) {
             return new IrecommendParser();
         } else if ($alias === self::OTZOVIK_ALIAS) {
