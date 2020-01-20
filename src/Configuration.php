@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace ReviewParser;
 
+use ReviewParser\Exception\InvalidArgumentException;
+
 /**
  * Class Configuration
  * @package ReviewParser
@@ -31,13 +33,17 @@ class Configuration
 
     /**
      * Configuration constructor.
+     *
+     * @param array $argv
+     * @param array $config
      */
     public function __construct(array $argv, array $config)
     {
-        $this->config        = $config;
-        $this->alias         = $argv[1];
-        $this->baseSearchUrl = $argv[2];
-        $this->countPages    = (int) $argv[3];
+        $this->config = $config;
+        var_dump($argv);
+        $this->setParserAlias($argv);
+        $this->setBaseSearchUrl($argv);
+        $this->setCountPages($argv);
     }
 
     /**
@@ -72,5 +78,46 @@ class Configuration
     public function getCountPages(): int
     {
         return $this->countPages;
+    }
+
+    /**
+     * @param array $argv
+     */
+    protected function setParserAlias(array $argv): void
+    {
+        if (isset($argv[1])) {
+            $alias = trim($argv[1]);
+            if (in_array($alias, ParserFactory::VALID_ALIASES, true)) {
+                $this->alias = $alias;
+            } else {
+                throw new InvalidArgumentException('Alias argument is unavailable.');
+            }
+        } else {
+            throw new InvalidArgumentException('Alias argument is empty.');
+        }
+    }
+
+    /**
+     * @param array $argv
+     */
+    protected function setBaseSearchUrl(array $argv): void
+    {
+        if (isset($argv[2])) {
+            $this->baseSearchUrl = $argv[2];
+        } else {
+            throw new InvalidArgumentException('BaseSearchUrl argument is empty.');
+        }
+    }
+
+    /**
+     * @param array $argv
+     */
+    protected function setCountPages(array $argv): void
+    {
+        if (isset($argv[3])) {
+            $this->countPages = (int) $argv[3];
+        } else {
+            throw new InvalidArgumentException('CountPages argument is empty.');
+        }
     }
 }
