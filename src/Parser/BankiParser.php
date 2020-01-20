@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace ReviewParser\Parser;
-
 
 use ReviewParser\ParserFactory;
 
@@ -78,7 +76,6 @@ class BankiParser extends AbstractReviewParser
     {
         return ParserFactory::BANKIRU_ALIAS;
     }
-
 
     protected function getBaseSiteUrl(): string
     {
