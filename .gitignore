@@ -1,4 +1,4 @@
 pages/*/**.html
 results/*/**.json
 reviews/*/**.html
-config.php
+/config.php

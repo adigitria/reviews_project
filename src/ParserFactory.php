@@ -16,13 +16,13 @@ class ParserFactory
     public const IRECOMMEND_ALIAS = 'irecommend';
     public const OTZOVIK_ALIAS    = 'otzovik';
 
-    public static function makeParser(string $alias, string $baseSearchUrl, int $countPages): ReviewParserInterface
+    public static function makeParser(Configuration $configuration): ReviewParserInterface
     {
-        if ($alias === self::BANKIRU_ALIAS) {
-            return new BankiParser($baseSearchUrl,$countPages);
-        } else if ($alias === self::IRECOMMEND_ALIAS) {
-            return new IrecommendParser();
-        } else if ($alias === self::OTZOVIK_ALIAS) {
+        if ($configuration->getAlias() === self::BANKIRU_ALIAS) {
+            return new BankiParser($configuration->getBaseSearchUrl(), $configuration->getCountPages());
+        } else if ($configuration->getAlias() === self::IRECOMMEND_ALIAS) {
+            return new IrecommendParser($configuration->getBaseSearchUrl(), $configuration->getCountPages(), $configuration->getHeaders($configuration->getAlias()));
+        } else if ($configuration->getAlias() === self::OTZOVIK_ALIAS) {
             return new OtzovikParser();
         } else {
             throw new ParserNotFoundException(ParserNotFoundException::ERROR_MESSAGE);

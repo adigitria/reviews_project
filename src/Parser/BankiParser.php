@@ -9,30 +9,6 @@ use ReviewParser\ParserFactory;
 
 class BankiParser extends AbstractReviewParser
 {
-    private $baseSearchUrl;
-
-    private $countPages;
-
-    /**
-     * BankiParser constructor.
-     *
-     * @param string $baseSearchUrl
-     * @param int    $countPages
-     */
-    public function __construct(string $baseSearchUrl, int $countPages)
-    {
-        $this->baseSearchUrl = $baseSearchUrl;
-        $this->countPages    = $countPages;
-    }
-
-
-    public function getParsingResult()
-    {
-        $this->pageParsing();
-        $this->gettingReviewInfoAsHtml();
-        $this->gettingReviewsAsJson();
-    }
-
     protected function pageParsing()
     {
         $baseSearchPage = $this->baseSearchUrl . '?page=';
