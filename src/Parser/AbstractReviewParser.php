@@ -36,9 +36,10 @@ abstract class AbstractReviewParser implements ReviewParserInterface
         $this->moveDirectoryToArchive($this->getPagesHtmlDir(), 'archive/pages/');
         $this->moveDirectoryToArchive($this->getReviewsHtmlDir(), 'archive/reviews/');
         $this->moveDirectoryToArchive($this->getResultsDir(), 'archive/results/');
-//        $this->pageParsing();
-//        $this->gettingReviewInfoAsHtml();
-//        $this->gettingReviewsAsJson();
+
+        $this->pageParsing();
+        $this->gettingReviewInfoAsHtml();
+        $this->gettingReviewsAsJson();
     }
 
     protected function getPagesHtmlDir(): string
