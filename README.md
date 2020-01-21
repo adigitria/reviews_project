@@ -1,6 +1,6 @@
 ## Build docker
 ```
-docker-compose up --build
+docker-compose build
 ```
 
 ## Manual running

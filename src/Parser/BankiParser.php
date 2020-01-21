@@ -69,7 +69,7 @@ class BankiParser extends AbstractReviewParser
             }
         }
 
-        file_put_contents($this->getResultsDir() . '/tele2_banki_reviews.json', json_encode($result, JSON_UNESCAPED_UNICODE));
+        file_put_contents($this->getResultsDir() . '/banki_reviews.json', json_encode($result, JSON_UNESCAPED_UNICODE));
     }
 
     public function getParserAlias(): string

@@ -1,5 +1,6 @@
+.idea
 pages/*/**.html
 results/*/**.json
 reviews/*/**.html
-archive/*/**.zip
+archive/*.zip
 /config.php
