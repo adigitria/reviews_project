@@ -20,7 +20,7 @@ class BankiParser extends AbstractReviewParser
 
     protected function gettingReviewInfoAsHtml()
     {
-        $reviewPattern = '/<article class=\"responses__item\"([\S|\s]+?)<\/article>/';
+        $reviewPattern = '/<article([\s|\S]+?)<\/article>/';
         $files         = scandir($this->getPagesHtmlDir());
 
         foreach ($files as $i => $file) {
@@ -43,7 +43,7 @@ class BankiParser extends AbstractReviewParser
         $titlePattern   = '/<a class=\"header-h3\"[^<]+>(.+)<\/a>/';
         $contentPattern = '/<div class=\"responses__item__message markup-inside-small markup-inside-small--bullet\"[^>]+>([\S|\s]+?)<\/div>/';
         $ratingPattern  = '/itemprop=\"ratingValue\"[^>]+>([\S|\s]+?)<\/span>/';
-        $datePattern    = '/datetime=\"([^"]+)\"/';
+        $datePattern    = '/data-test=\"responses-datetime\">([\s\S]+)<\/time>/';
 
         $patterns = [
             'title'   => $titlePattern,
@@ -64,6 +64,8 @@ class BankiParser extends AbstractReviewParser
                     preg_match($pattern, $content, $matches);
                     if (isset($matches[1])) {
                         $result[$i][$key] = trim($matches[1]);
+                    } else {
+                        $result[$i][$key] = '';
                     }
                 }
             }
