@@ -3,6 +3,9 @@
 // Add \r\n
 return [
     'headers' => [
+        'banki' => [
+
+        ],
         'irecommend' => [
              'full_headers' => 'Cookie: aaaaaaa\r\n' .
                'Accept: tbbbbbb\r\n' .
