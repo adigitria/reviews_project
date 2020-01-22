@@ -1,5 +1,6 @@
 ## Manual running
 ```
-./runner banki https://www.site.ru/some/path/to/search-list/ 6
+docker-compose run --rm app ./runner banki link 3
+
 ```
 Where "6" - count of parsing pages
