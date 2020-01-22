@@ -1,3 +1,9 @@
+
+## Before work
+```
+cp config.php.dist config.php
+```
+
 ## Build docker
 ```
 docker-compose build

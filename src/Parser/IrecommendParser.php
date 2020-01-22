@@ -27,8 +27,8 @@ class IrecommendParser extends AbstractReviewParser
             foreach ($matches[1] as $index => $reviewPage) {
                 $content = file_get_contents($this->getBaseSiteUrl() . $reviewPage, false, $context);
                 file_put_contents($this->getPagesHtmlDir() . '/review_' . $i . '_' . $index . '.html', $content);
+                echo 'Download page - ' .  $i . '_' . $index . PHP_EOL;
             }
-            echo 'Download page - ' . $i . PHP_EOL;
         }
     }
 
