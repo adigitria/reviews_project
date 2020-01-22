@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  # PHP Application
+  app:
+    build: .
+    volumes:
+      - ./:/app

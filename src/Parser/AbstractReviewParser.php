@@ -7,8 +7,14 @@ use \ZipArchive;
 
 abstract class AbstractReviewParser implements ReviewParserInterface
 {
+    /**
+     * @var string
+     */
     protected $baseSearchUrl;
 
+    /**
+     * @var int
+     */
     protected $countPages;
 
     /**
@@ -32,9 +38,7 @@ abstract class AbstractReviewParser implements ReviewParserInterface
 
     public function getParsingResult()
     {
-        $this->moveDirectoryToArchive($this->getPagesHtmlDir(), 'archive/pages/');
-        $this->moveDirectoryToArchive($this->getReviewsHtmlDir(), 'archive/reviews/');
-        $this->moveDirectoryToArchive($this->getResultsDir(), 'archive/results/');
+        $this->movePreviousToArchive();
 
         $this->pageParsing();
         $this->gettingReviewInfoAsHtml();
@@ -64,30 +68,56 @@ abstract class AbstractReviewParser implements ReviewParserInterface
 
     abstract protected function gettingReviewsAsJson();
 
-    protected function moveDirectoryToArchive(string $compressDirectory, string $archiveDirectory)
+    protected function movePreviousToArchive(): void
     {
-        $compressDirectory .= '/';
-        $currentFilesCount = count(scandir($archiveDirectory)) - 3;
-        $archiveFile       = $archiveDirectory . $this->getParserAlias() . '_' . ($currentFilesCount + 1) . '.zip';
-        $compressDirectoryItterator = glob($compressDirectory . '*');
-        if(count($compressDirectoryItterator) > 0){
-            $zip = new ZipArchive();
-            $res = $zip->open($archiveFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-            if ($res === true) {
-                foreach ($compressDirectoryItterator as $file) {
-                    if (!strpos($file, '.gitempty')) {
-                        $zip->addFile($file, basename($file));
-                    }
-                }
-                $zip->close();
+        $archiveDirectory = 'archive/';
+        $archiveFile      = $archiveDirectory . $this->getParserAlias() . '_' . date('Ymd_His') . '.zip';
 
+        $compressDirs = [
+            'pages'   => $this->getPagesHtmlDir(),
+            'reviews' => $this->getReviewsHtmlDir(),
+            'results' => $this->getResultsDir(),
+        ];
+
+        $this->archiveDirectories($archiveFile, $compressDirs);
+        $this->removeDirectoriesContent($compressDirs);
+    }
+
+    /**
+     * @param string $archiveFile
+     * @param array  $compressDirs
+     */
+    protected function archiveDirectories(string $archiveFile, array $compressDirs): void
+    {
+        $zip = new ZipArchive();
+        $res = $zip->open($archiveFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        if ($res === true) {
+            foreach ($compressDirs as $type => $compressDir) {
+                $compressDirectoryItterator = glob($compressDir . '/*');
+                $zip->addEmptyDir($type);
                 foreach ($compressDirectoryItterator as $file) {
                     if (!strpos($file, '.gitempty')) {
-                        unlink($file);
+                        $zip->addFile($file, $type.'/'.basename($file));
                     }
                 }
-            } else {
-                throw new \RuntimeException('Failed to create to zip. Error: ' . $res);
+            }
+            $zip->close();
+        } else {
+            throw new \RuntimeException('Failed to create to zip. Error: ' . $res);
+        }
+    }
+
+    /**
+     * @param array $compressDirs
+     */
+    protected function removeDirectoriesContent(array $compressDirs): void
+    {
+        foreach ($compressDirs as $index => $compressDir) {
+            $compressDirectoryItterator = glob($compressDir . '/*');
+            foreach ($compressDirectoryItterator as $file) {
+                if (!strpos($file, '.gitempty')) {
+                    unlink($file);
+                }
             }
         }
     }

@@ -40,8 +40,7 @@ class Configuration
     public function __construct(array $argv, array $config)
     {
         $this->config = $config;
-        $this->setParserAlias($argv);
-        $this->setBaseSearchUrl($argv);
+        $this->setUrlAndParserAlias($argv);
         $this->setCountPages($argv);
     }
 
@@ -82,30 +81,20 @@ class Configuration
     /**
      * @param array $argv
      */
-    protected function setParserAlias(array $argv): void
+    protected function setUrlAndParserAlias(array $argv): void
     {
         if (isset($argv[1])) {
-            $alias = trim($argv[1]);
-            if (in_array($alias, ParserFactory::VALID_ALIASES, true)) {
-                $this->alias = $alias;
+            preg_match('/https:\/\/[w\.]*([^\/]+)\.[rucom]{2,3}/', $argv[1], $matches);
+            if (isset($matches[1])) {
+                $this->alias         = $matches[1];
+                $this->baseSearchUrl = $argv[1];
             } else {
-                throw new InvalidArgumentException('Alias argument is unavailable.');
+                throw new InvalidArgumentException('BaseSearchUrl is not correct.');
             }
-        } else {
-            throw new InvalidArgumentException('Alias argument is empty.');
-        }
-    }
-
-    /**
-     * @param array $argv
-     */
-    protected function setBaseSearchUrl(array $argv): void
-    {
-        if (isset($argv[2])) {
-            $this->baseSearchUrl = $argv[2];
         } else {
             throw new InvalidArgumentException('BaseSearchUrl argument is empty.');
         }
+
     }
 
     /**
@@ -113,8 +102,8 @@ class Configuration
      */
     protected function setCountPages(array $argv): void
     {
-        if (isset($argv[3])) {
-            $this->countPages = (int) $argv[3];
+        if (isset($argv[2])) {
+            $this->countPages = (int) $argv[2];
         } else {
             throw new InvalidArgumentException('CountPages argument is empty.');
         }
