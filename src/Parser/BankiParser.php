@@ -7,12 +7,12 @@ use ReviewParser\ParserFactory;
 
 class BankiParser extends AbstractReviewParser
 {
-    protected function pageParsing()
+    protected function pagesParsing()
     {
         $baseSearchPage = $this->baseSearchUrl . '?page=';
 
         for ($i = 1; $i <= $this->countPages; $i++) {
-            $pageContent = file_get_contents($baseSearchPage . $i);
+            $pageContent = $this->safeGetContents($baseSearchPage . $i);
             file_put_contents($this->getPagesHtmlDir() . '/page_' . $i . '.html', $pageContent);
             echo 'Download page - ' . $i . PHP_EOL;
         }

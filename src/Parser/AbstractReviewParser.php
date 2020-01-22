@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace ReviewParser\Parser;
 
-use \ZipArchive;
+use ReviewParser\Exception\ProblemWithDownloadPageException;
+use ReviewParser\Helper\ArchiveHelper;
 
 abstract class AbstractReviewParser implements ReviewParserInterface
 {
@@ -23,24 +24,40 @@ abstract class AbstractReviewParser implements ReviewParserInterface
     protected $headers;
 
     /**
+     * @var ArchiveHelper
+     */
+    protected $archiveHelper;
+
+    /**
      * BankiParser constructor.
      *
      * @param string $baseSearchUrl
-     * @param int    $countPages
-     * @param array  $headers
+     * @param int $countPages
+     * @param array $headers
      */
     public function __construct(string $baseSearchUrl, int $countPages, array $headers = [])
     {
         $this->baseSearchUrl = $baseSearchUrl;
-        $this->countPages    = $countPages;
-        $this->headers       = $headers;
+        $this->countPages = $countPages;
+        $this->headers = $headers;
+
+        $this->archiveHelper = new ArchiveHelper($this->getParserAlias(), [
+            'pages' => $this->getPagesHtmlDir(),
+            'reviews' => $this->getReviewsHtmlDir(),
+            'results' => $this->getResultsDir(),
+        ]);
     }
 
     public function getParsingResult()
     {
-        $this->movePreviousToArchive();
+        $this->archiveHelper->movePreviousToArchive();
 
-        $this->pageParsing();
+        try {
+            $this->pagesParsing();
+        } catch (ProblemWithDownloadPageException $exception) {
+            echo $exception->getMessage() . PHP_EOL;
+        }
+
         $this->gettingReviewInfoAsHtml();
         $this->gettingReviewsAsJson();
     }
@@ -60,65 +77,25 @@ abstract class AbstractReviewParser implements ReviewParserInterface
         return 'results/' . $this->getParserAlias();
     }
 
+    protected function safeGetContents(string $url, $use_include_path = false, $context = null): string
+    {
+        $content = file_get_contents($url, $use_include_path, $context);
+
+        if ($content === false) {
+            throw new ProblemWithDownloadPageException('Could not get an answer from ' . $url);
+        } elseif (!in_array('HTTP/1.1 200 OK', $http_response_header)) {
+            $headers = implode(';', $http_response_header);
+            throw new ProblemWithDownloadPageException('Got no 200 code. Response headers: ' . $headers);
+        }
+
+        return $content;
+    }
+
     abstract protected function getBaseSiteUrl(): string;
 
-    abstract protected function pageParsing();
+    abstract protected function pagesParsing();
 
     abstract protected function gettingReviewInfoAsHtml();
 
     abstract protected function gettingReviewsAsJson();
-
-    protected function movePreviousToArchive(): void
-    {
-        $archiveDirectory = 'archive/';
-        $archiveFile      = $archiveDirectory . $this->getParserAlias() . '_' . date('Ymd_His') . '.zip';
-
-        $compressDirs = [
-            'pages'   => $this->getPagesHtmlDir(),
-            'reviews' => $this->getReviewsHtmlDir(),
-            'results' => $this->getResultsDir(),
-        ];
-
-        $this->archiveDirectories($archiveFile, $compressDirs);
-        $this->removeDirectoriesContent($compressDirs);
-    }
-
-    /**
-     * @param string $archiveFile
-     * @param array  $compressDirs
-     */
-    protected function archiveDirectories(string $archiveFile, array $compressDirs): void
-    {
-        $zip = new ZipArchive();
-        $res = $zip->open($archiveFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-        if ($res === true) {
-            foreach ($compressDirs as $type => $compressDir) {
-                $compressDirectoryItterator = glob($compressDir . '/*');
-                $zip->addEmptyDir($type);
-                foreach ($compressDirectoryItterator as $file) {
-                    if (!strpos($file, '.gitempty')) {
-                        $zip->addFile($file, $type.'/'.basename($file));
-                    }
-                }
-            }
-            $zip->close();
-        } else {
-            throw new \RuntimeException('Failed to create to zip. Error: ' . $res);
-        }
-    }
-
-    /**
-     * @param array $compressDirs
-     */
-    protected function removeDirectoriesContent(array $compressDirs): void
-    {
-        foreach ($compressDirs as $index => $compressDir) {
-            $compressDirectoryItterator = glob($compressDir . '/*');
-            foreach ($compressDirectoryItterator as $file) {
-                if (!strpos($file, '.gitempty')) {
-                    unlink($file);
-                }
-            }
-        }
-    }
 }

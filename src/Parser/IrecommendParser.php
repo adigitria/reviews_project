@@ -7,7 +7,7 @@ use ReviewParser\ParserFactory;
 
 class IrecommendParser extends AbstractReviewParser
 {
-    protected function pageParsing()
+    protected function pagesParsing()
     {
         $baseSearchPage = $this->baseSearchUrl . '?page=';
 
@@ -18,16 +18,16 @@ class IrecommendParser extends AbstractReviewParser
             ],
         ];
 
-        $context      = stream_context_create($opts);
+        $context = stream_context_create($opts);
         $linksPattern = '/<a href=\"([^"]+)\" class=\"more\"><\/a>/';
 
         for ($i = 1; $i <= $this->countPages; $i++) {
-            $pageContent = file_get_contents($baseSearchPage . $i, false, $context);
+            $pageContent = $this->safeGetContents($baseSearchPage . $i, false, $context);
             preg_match_all($linksPattern, $pageContent, $matches);
             foreach ($matches[1] as $index => $reviewPage) {
-                $content = file_get_contents($this->getBaseSiteUrl() . $reviewPage, false, $context);
+                $content = $this->safeGetContents($this->getBaseSiteUrl() . $reviewPage, false, $context);
                 file_put_contents($this->getPagesHtmlDir() . '/review_' . $i . '_' . $index . '.html', $content);
-                echo 'Download page - ' .  $i . '_' . $index . PHP_EOL;
+                echo 'Download page - ' . $i . '_' . $index . PHP_EOL;
             }
         }
     }
@@ -35,7 +35,7 @@ class IrecommendParser extends AbstractReviewParser
     protected function gettingReviewInfoAsHtml()
     {
         $reviewPattern = '/<!-- review block start -->([\s\S]+)<!-- review block end -->/';
-        $files         = scandir($this->getPagesHtmlDir());
+        $files = scandir($this->getPagesHtmlDir());
 
         foreach ($files as $i => $file) {
             $filePath = $this->getPagesHtmlDir() . '/' . $file;
@@ -54,16 +54,16 @@ class IrecommendParser extends AbstractReviewParser
     {
         $files = scandir($this->getReviewsHtmlDir());
 
-        $titlePattern   = '/<h2 class=\"reviewTitle\" [^>]+>\s*<a[^>]+>([\s\S]+?)<\/a>/';
+        $titlePattern = '/<h2 class=\"reviewTitle\" [^>]+>\s*<a[^>]+>([\s\S]+?)<\/a>/';
         $contentPattern = '/<div class="description hasinlineimage" itemprop="reviewBody">([\s\S]+?)<\/div>/';
-        $ratingPattern  = '/<meta itemprop=\"ratingValue\" content=\"([0-9]+)" \/>/';
-        $datePattern    = '/<meta itemprop=\"datePublished\" content=\"(.+)\" \/>/';
+        $ratingPattern = '/<meta itemprop=\"ratingValue\" content=\"([0-9]+)" \/>/';
+        $datePattern = '/<meta itemprop=\"datePublished\" content=\"(.+)\" \/>/';
 
         $patterns = [
-            'title'   => $titlePattern,
+            'title' => $titlePattern,
             'content' => $contentPattern,
-            'rating'  => $ratingPattern,
-            'date'    => $datePattern,
+            'rating' => $ratingPattern,
+            'date' => $datePattern,
         ];
 
         $result = [];
@@ -88,7 +88,7 @@ class IrecommendParser extends AbstractReviewParser
                             ], $value);
                         }
                         $result[$i][$key] = $value;
-                    }else{
+                    } else {
                         $result[$i][$key] = '';
                     }
                 }

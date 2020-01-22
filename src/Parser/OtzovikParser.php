@@ -17,7 +17,7 @@ class OtzovikParser extends AbstractReviewParser
         return 'https://otzovik.com';
     }
 
-    protected function pageParsing()
+    protected function pagesParsing()
     {
         $url   = $this->baseSearchUrl . '/%PAGE_NUMBER%/';
         $agent = $this->headers['user_agent'];
