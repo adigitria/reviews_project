@@ -14,7 +14,6 @@ class BankiParser extends AbstractReviewParser
         for ($i = 1; $i <= $this->countPages; $i++) {
             $pageContent = $this->safeGetContents($baseSearchPage . $i);
             file_put_contents($this->getPagesHtmlDir() . '/page_' . $i . '.html', $pageContent);
-            echo 'Download page - ' . $i . PHP_EOL;
         }
     }
 

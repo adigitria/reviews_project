@@ -5,6 +5,7 @@ namespace ReviewParser\Parser;
 
 use ReviewParser\Exception\ProblemWithDownloadPageException;
 use ReviewParser\Helper\ArchiveHelper;
+use ReviewParser\Helper\Logger;
 
 abstract class AbstractReviewParser implements ReviewParserInterface
 {
@@ -27,6 +28,11 @@ abstract class AbstractReviewParser implements ReviewParserInterface
      * @var ArchiveHelper
      */
     protected $archiveHelper;
+
+    /**
+     * @var Logger
+     */
+    protected $connectionLog;
 
     /**
      * BankiParser constructor.
@@ -55,6 +61,7 @@ abstract class AbstractReviewParser implements ReviewParserInterface
         try {
             $this->pagesParsing();
         } catch (ProblemWithDownloadPageException $exception) {
+            $this->connectionLog->addErrorMessage($exception->getUrl());
             echo $exception->getMessage() . PHP_EOL;
         }
 
@@ -79,14 +86,21 @@ abstract class AbstractReviewParser implements ReviewParserInterface
 
     protected function safeGetContents(string $url, $use_include_path = false, $context = null): string
     {
-        $content = file_get_contents($url, $use_include_path, $context);
+        try {
+            $content = file_get_contents($url, $use_include_path, $context);
+        } catch (\Throwable $exception) {
+            throw new ProblemWithDownloadPageException('Unexpected Error: ' . $exception->getMessage(), $url);
+        }
 
         if ($content === false) {
-            throw new ProblemWithDownloadPageException('Could not get an answer from ' . $url);
+            throw new ProblemWithDownloadPageException('Could not get an answer from ' . $url, $url);
         } elseif (!in_array('HTTP/1.1 200 OK', $http_response_header)) {
             $headers = implode(';', $http_response_header);
-            throw new ProblemWithDownloadPageException('Got no 200 code. Response headers: ' . $headers);
+            throw new ProblemWithDownloadPageException('Got no 200 code. Response headers: ' . $headers, $url);
         }
+
+        echo 'Download page - ' . $url . PHP_EOL;
+        $this->connectionLog->addInfoMessage($url);
 
         return $content;
     }
@@ -98,4 +112,12 @@ abstract class AbstractReviewParser implements ReviewParserInterface
     abstract protected function gettingReviewInfoAsHtml();
 
     abstract protected function gettingReviewsAsJson();
+
+    /**
+     * @param Logger $connectionLog
+     */
+    public function setConnectionLog(Logger $connectionLog): void
+    {
+        $this->connectionLog = $connectionLog;
+    }
 }

@@ -3,4 +3,5 @@ pages/*/**.html
 results/*/**.json
 reviews/*/**.html
 archive/*.zip
+logs/*.log
 /config.php
