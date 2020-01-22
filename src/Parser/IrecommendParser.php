@@ -77,7 +77,19 @@ class IrecommendParser extends AbstractReviewParser
                     unset($matches);
                     preg_match($pattern, $content, $matches);
                     if (isset($matches[1])) {
-                        $result[$i][$key] = trim($matches[1]);
+                        $value = trim($matches[1]);
+                        if ($key === 'date') {
+                            $value = preg_replace([
+                                '/T/',
+                                '/\+[0-9]{2}:00/',
+                            ], [
+                                ' ',
+                                '',
+                            ], $value);
+                        }
+                        $result[$i][$key] = $value;
+                    }else{
+                        $result[$i][$key] = '';
                     }
                 }
             }
