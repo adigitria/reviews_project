@@ -43,7 +43,7 @@ class BankiParser extends AbstractReviewParser
         $titlePattern   = '/<a class=\"header-h3\"[^<]+>(.+)<\/a>/';
         $contentPattern = '/<div class=\"responses__item__message markup-inside-small markup-inside-small--bullet\"[^>]+>([\S|\s]+?)<\/div>/';
         $ratingPattern  = '/itemprop=\"ratingValue\"[^>]+>([\S|\s]+?)<\/span>/';
-        $datePattern    = '/data-test=\"responses-datetime\">([\s\S]+)<\/time>/';
+        $datePattern    = '/>([0-9-:. ]+)<\/time>/';
 
         $patterns = [
             'title'   => $titlePattern,

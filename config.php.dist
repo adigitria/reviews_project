@@ -1,8 +1,17 @@
 <?php
 
+// Add \r\n
 return [
     'headers' => [
-        'irecommend' => '',
+        'irecommend' => [
+             'full_headers' => 'Cookie: aaaaaaa\r\n' .
+               'Accept: tbbbbbb\r\n' .
+               'Host: ffffffff\r\n' .
+               'User-Agent: vvvvvvvvv\r\n' .
+               'Accept-Language: kkkkkkkkk\r\n' .
+               'Accept-Encoding: uuuuuuuuuu\r\n' .
+               'Connection: mmmmmmmmmm\r\n',
+        ],
         'otzovik' => [
             'user_agent' => '',
             'cookie' => '',
