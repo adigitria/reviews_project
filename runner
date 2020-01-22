@@ -2,6 +2,9 @@
 <?php
 include 'autoload.php';
 
+set_time_limit(0);
+ini_set('memory_limit', '2048M');
+
 use \ReviewParser\ParserFactory;
 use \ReviewParser\Configuration;
 
