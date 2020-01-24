@@ -10,23 +10,14 @@ class IrecommendParser extends AbstractReviewParser
     protected function pagesParsing()
     {
         $baseSearchPage = $this->baseSearchUrl . '?page=';
-
-        $opts = [
-            'http' => [
-                'method' => "GET",
-                'header' => $this->headers['full_headers'],
-            ],
-        ];
-
-        $context = stream_context_create($opts);
         $linksPattern = '/<a href=\"([^"]+)\" class=\"more\"><\/a>/';
 
         for ($i = 1; $i <= $this->countPages; $i++) {
-            $pageContent = $this->safeGetContents($baseSearchPage . $i, false, $context);
+            $pageContent = $this->safeGetContentByCurl($baseSearchPage . $i);
             preg_match_all($linksPattern, $pageContent, $matches);
             foreach ($matches[1] as $index => $reviewPage) {
                 $url = $this->getBaseSiteUrl() . $reviewPage;
-                $content = $this->safeGetContents($url, false, $context);
+                $content = $this->safeGetContentByCurl($url);
                 file_put_contents($this->getPagesHtmlDir() . '/review_' . $i . '_' . $index . '.html', $content);
             }
         }

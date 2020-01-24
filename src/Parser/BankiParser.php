@@ -12,7 +12,7 @@ class BankiParser extends AbstractReviewParser
         $baseSearchPage = $this->baseSearchUrl . '?page=';
 
         for ($i = 1; $i <= $this->countPages; $i++) {
-            $pageContent = $this->safeGetContents($baseSearchPage . $i);
+            $pageContent = $this->safeGetContentByCurl($baseSearchPage . $i);
             file_put_contents($this->getPagesHtmlDir() . '/page_' . $i . '.html', $pageContent);
         }
     }

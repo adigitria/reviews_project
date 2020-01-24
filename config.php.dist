@@ -1,23 +1,42 @@
 <?php
 
-// Add \r\n
 return [
     'headers' => [
         'banki' => [
-
+            'Accept' => '',
+            'Accept-Language' => '',
+            'Content-Type' => '',
+            'Origin' => '',
+            'Host' => '',
+            'Connection' => '',
+            'Cookie' => '',
+            'Accept-Encoding' => '',
+            'Referer' => '',
+            'User-Agent' => '',
         ],
         'irecommend' => [
-             'full_headers' => 'Cookie: aaaaaaa\r\n' .
-               'Accept: tbbbbbb\r\n' .
-               'Host: ffffffff\r\n' .
-               'User-Agent: vvvvvvvvv\r\n' .
-               'Accept-Language: kkkkkkkkk\r\n' .
-               'Accept-Encoding: uuuuuuuuuu\r\n' .
-               'Connection: mmmmmmmmmm\r\n',
+            'Accept' => '',
+            'Accept-Language' => '',
+            'Content-Type' => '',
+            'Origin' => '',
+            'Host' => '',
+            'Connection' => '',
+            'Cookie' => '',
+            'Accept-Encoding' => '',
+            'Referer' => '',
+            'User-Agent' => '',
         ],
         'otzovik' => [
-            'user_agent' => '',
-            'cookie' => '',
+            'Accept' => '',
+            'Accept-Language' => '',
+            'Content-Type' => '',
+            'Origin' => '',
+            'Host' => '',
+            'Connection' => '',
+            'Cookie' => '',
+            'Accept-Encoding' => '',
+            'Referer' => '',
+            'User-Agent' => '',
         ]
     ]
 ];

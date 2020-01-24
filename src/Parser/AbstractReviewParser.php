@@ -6,9 +6,15 @@ namespace ReviewParser\Parser;
 use ReviewParser\Exception\ProblemWithDownloadPageException;
 use ReviewParser\Helper\ArchiveHelper;
 use ReviewParser\Helper\Logger;
+use ReviewParser\Helper\RequestHelper;
 
 abstract class AbstractReviewParser implements ReviewParserInterface
 {
+    /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
     /**
      * @var string
      */
@@ -18,11 +24,6 @@ abstract class AbstractReviewParser implements ReviewParserInterface
      * @var int
      */
     protected $countPages;
-
-    /**
-     * @var array
-     */
-    protected $headers;
 
     /**
      * @var ArchiveHelper
@@ -37,15 +38,15 @@ abstract class AbstractReviewParser implements ReviewParserInterface
     /**
      * BankiParser constructor.
      *
+     * @param RequestHelper $requestHelper
      * @param string $baseSearchUrl
      * @param int $countPages
-     * @param array $headers
      */
-    public function __construct(string $baseSearchUrl, int $countPages, array $headers = [])
+    public function __construct(RequestHelper $requestHelper, string $baseSearchUrl, int $countPages)
     {
+        $this->requestHelper = $requestHelper;
         $this->baseSearchUrl = $baseSearchUrl;
         $this->countPages = $countPages;
-        $this->headers = $headers;
 
         $this->archiveHelper = new ArchiveHelper($this->getParserAlias(), [
             'pages' => $this->getPagesHtmlDir(),
@@ -69,6 +70,28 @@ abstract class AbstractReviewParser implements ReviewParserInterface
         $this->gettingReviewsAsJson();
     }
 
+    /**
+     * @param Logger $connectionLog
+     */
+    public function setConnectionLog(Logger $connectionLog): void
+    {
+        $this->connectionLog = $connectionLog;
+    }
+
+    protected function safeGetContentByCurl(string $url): string
+    {
+        list($error, $content) = $this->requestHelper->makeRequest($url);
+
+        if ($error !== '') {
+            throw new ProblemWithDownloadPageException($error, $url);
+        }
+
+        echo 'Download page - ' . $url . PHP_EOL;
+        $this->connectionLog->addInfoMessage($url);
+
+        return $content;
+    }
+
     protected function getPagesHtmlDir(): string
     {
         return 'pages/' . $this->getParserAlias();
@@ -84,27 +107,6 @@ abstract class AbstractReviewParser implements ReviewParserInterface
         return 'results/' . $this->getParserAlias();
     }
 
-    protected function safeGetContents(string $url, $use_include_path = false, $context = null): string
-    {
-        try {
-            $content = file_get_contents($url, $use_include_path, $context);
-        } catch (\Throwable $exception) {
-            throw new ProblemWithDownloadPageException('Unexpected Error: ' . $exception->getMessage(), $url);
-        }
-
-        if ($content === false) {
-            throw new ProblemWithDownloadPageException('Could not get an answer from ' . $url, $url);
-        } elseif (!in_array('HTTP/1.1 200 OK', $http_response_header)) {
-            $headers = implode(';', $http_response_header);
-            throw new ProblemWithDownloadPageException('Got no 200 code. Response headers: ' . $headers, $url);
-        }
-
-        echo 'Download page - ' . $url . PHP_EOL;
-        $this->connectionLog->addInfoMessage($url);
-
-        return $content;
-    }
-
     abstract protected function getBaseSiteUrl(): string;
 
     abstract protected function pagesParsing();
@@ -112,12 +114,4 @@ abstract class AbstractReviewParser implements ReviewParserInterface
     abstract protected function gettingReviewInfoAsHtml();
 
     abstract protected function gettingReviewsAsJson();
-
-    /**
-     * @param Logger $connectionLog
-     */
-    public function setConnectionLog(Logger $connectionLog): void
-    {
-        $this->connectionLog = $connectionLog;
-    }
 }
