@@ -38,5 +38,11 @@ return [
             'Referer' => '',
             'User-Agent' => '',
         ]
+    ],
+    'ip' => [
+        'enable' => false,
+        'list' => [
+            '1.1.1.1.1' => '1111',
+        ],
     ]
 ];

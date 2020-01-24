@@ -6,6 +6,7 @@ namespace ReviewParser;
 use ReviewParser\Exception\ParserNotFoundException;
 use ReviewParser\Helper\Logger;
 use ReviewParser\Helper\RequestHelper;
+use ReviewParser\Model\IPIterator;
 use ReviewParser\Parser\BankiParser;
 use ReviewParser\Parser\IrecommendParser;
 use ReviewParser\Parser\OtzovikParser;
@@ -19,7 +20,10 @@ class ParserFactory
 
     public static function makeParser(Configuration $configuration): ReviewParserInterface
     {
-        $requestHelper = new RequestHelper($configuration->getRequestHeaders($configuration->getAlias()));
+        $requestHelper = new RequestHelper(
+            $configuration->getRequestHeaders($configuration->getAlias()),
+            $configuration->isIpProxyEnable() ? new IPIterator($configuration->getIpList()) : null
+        );
 
         if ($configuration->getAlias() === self::BANKIRU_ALIAS) {
             $parser = new BankiParser($requestHelper, $configuration->getBaseSearchUrl(), $configuration->getCountPages());
