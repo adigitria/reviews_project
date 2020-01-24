@@ -102,6 +102,22 @@ class Configuration
     }
 
     /**
+     * @return bool
+     */
+    public function isIpProxyEnable(): bool
+    {
+        return $this->config['ip']['enable'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getIpList(): array
+    {
+        return $this->config['ip']['list'];
+    }
+
+    /**
      * @param array $argv
      */
     protected function setUrlAndParserAlias(array $argv): void

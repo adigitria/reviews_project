@@ -4,18 +4,33 @@ declare(strict_types=1);
 namespace ReviewParser\Helper;
 
 use ReviewParser\Exception\ProblemWithDownloadPageException;
+use ReviewParser\Model\IPIterator;
 
+/**
+ * Class RequestHelper
+ * @package ReviewParser\Helper
+ */
 class RequestHelper
 {
+    /**
+     * @var array
+     */
     private $headers = [];
+
+    /**
+     * @var IPIterator
+     */
+    private $IPIterator;
 
     /**
      * RequestHelper constructor.
      * @param array $headers
+     * @param IPIterator|null $IPIterator
      */
-    public function __construct(array $headers)
+    public function __construct(array $headers, IPIterator $IPIterator = null)
     {
         $this->headers = $headers;
+        $this->IPIterator = $IPIterator;
     }
 
     /**
@@ -35,10 +50,10 @@ class RequestHelper
 
             if (curl_errno($ch) !== 0) {
                 $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                if($responseCode !== 200){
+                if ($responseCode !== 200) {
                     $error = 'Got no 200 code. Response code: ' . $responseCode;
-                }else{
-                    $error = 'Curl Error: '. curl_error($ch);
+                } else {
+                    $error = 'Curl Error: ' . curl_error($ch);
                 }
             } elseif ($content === false) {
                 $error = 'Could not get an answer from ' . $url;
@@ -66,8 +81,12 @@ class RequestHelper
             curl_setopt_array($ch, $this->headers);
         }
 
-//        TODO add ability to using list of proxy IP
-//        curl_setopt($ch, CURLOPT_PROXY, '');
-//        curl_setopt($ch, CURLOPT_PROXYPORT, '');
+        if ($this->IPIterator instanceof IPIterator) {
+            if ($this->IPIterator->valid()) {
+                curl_setopt($ch, CURLOPT_PROXY, $this->IPIterator->getIp());
+                curl_setopt($ch, CURLOPT_PROXYPORT, $this->IPIterator->getPort());
+                $this->IPIterator->next();
+            }
+        }
     }
 }
