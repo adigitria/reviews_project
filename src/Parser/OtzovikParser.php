@@ -19,7 +19,7 @@ class OtzovikParser extends AbstractReviewParser
 
     protected function pagesParsing()
     {
-        $url   = $this->baseSearchUrl . '/%PAGE_NUMBER%/';
+        $url     = $this->baseSearchUrl . '/%PAGE_NUMBER%/';
         $content = $this->safeGetContentByCurl($url);
     }
 

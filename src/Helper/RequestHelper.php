@@ -23,18 +23,27 @@ class RequestHelper
     private $IPIterator;
 
     /**
+     * @var int
+     */
+    private $countAttempts;
+
+    /**
      * RequestHelper constructor.
-     * @param array $headers
+     *
+     * @param array           $headers
+     * @param int             $countAttempts
      * @param IPIterator|null $IPIterator
      */
-    public function __construct(array $headers, IPIterator $IPIterator = null)
+    public function __construct(array $headers, int $countAttempts = 1, IPIterator $IPIterator = null)
     {
-        $this->headers = $headers;
-        $this->IPIterator = $IPIterator;
+        $this->headers       = $headers;
+        $this->IPIterator    = $IPIterator;
+        $this->countAttempts = $countAttempts;
     }
 
     /**
      * @param string $url
+     *
      * @return array
      */
     public function makeRequest(string $url): array
@@ -42,21 +51,25 @@ class RequestHelper
         $ch = curl_init();
 
         try {
-            $error = '';
-
             $this->makeCurlSettings($url, $ch);
 
-            $content = curl_exec($ch);
+            for ($i = 0; $i < $this->countAttempts; $i++) {
+                $error   = '';
+                $content = curl_exec($ch);
 
-            if (curl_errno($ch) !== 0) {
-                $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                if ($responseCode !== 200) {
-                    $error = 'Got no 200 code. Response code: ' . $responseCode;
-                } else {
-                    $error = 'Curl Error: ' . curl_error($ch);
+                if (curl_errno($ch) !== 0) {
+                    $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    if ($responseCode !== 200) {
+                        $error = 'Got no 200 code. Response code: ' . $responseCode;
+                    } else {
+                        $error = 'Curl Error: ' . curl_error($ch);
+                    }
+                } else if ($content === false) {
+                    $error = 'Could not get an answer from ' . $url;
                 }
-            } elseif ($content === false) {
-                $error = 'Could not get an answer from ' . $url;
+                if ($error === '') {
+                    break;
+                }
             }
         } catch (\Throwable $exception) {
             throw new ProblemWithDownloadPageException('Unexpected Error: ' . $exception->getMessage(), $url);
@@ -69,7 +82,7 @@ class RequestHelper
 
     /**
      * @param string $url
-     * @param $ch
+     * @param        $ch
      */
     protected function makeCurlSettings(string $url, $ch): void
     {

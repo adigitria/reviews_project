@@ -21,8 +21,9 @@ class ArchiveHelper
 
     /**
      * ArchiveHelper constructor.
+     *
      * @param string $archiveAlias
-     * @param array $compressDirs
+     * @param array  $compressDirs
      */
     public function __construct(string $archiveAlias, array $compressDirs)
     {
@@ -33,7 +34,7 @@ class ArchiveHelper
     public function movePreviousToArchive(): void
     {
         $archiveDirectory = self::DEFAULT_ARCHIVE_DIR;
-        $archiveFile = $archiveDirectory . $this->archiveAlias . '_' . date('Ymd_His') . '.zip';
+        $archiveFile      = $archiveDirectory . $this->archiveAlias . '_' . date('Ymd_His') . '.zip';
 
         $this->archiveDirectories($archiveFile, $this->compressDirs);
         $this->removeDirectoriesContent($this->compressDirs);
@@ -41,7 +42,7 @@ class ArchiveHelper
 
     /**
      * @param string $archiveFile
-     * @param array $compressDirs
+     * @param array  $compressDirs
      */
     protected function archiveDirectories(string $archiveFile, array $compressDirs): void
     {

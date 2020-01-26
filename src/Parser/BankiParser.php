@@ -54,7 +54,7 @@ class BankiParser extends AbstractReviewParser
         $result = [];
         foreach ($files as $i => $file) {
             $filePath = $this->getReviewsHtmlDir() . '/' . $file;
-            if (file_exists($filePath) && !in_array($file, ['.', '..','.gitempty'])) {
+            if (file_exists($filePath) && !in_array($file, ['.', '..', '.gitempty'])) {
                 echo $filePath . PHP_EOL;
                 $content = file_get_contents($filePath);
 

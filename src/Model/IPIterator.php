@@ -7,13 +7,13 @@ use \Iterator;
 
 class IPIterator implements Iterator
 {
-    private $ipList = [];
+    private $ipList;
 
     /**
      * IPIterator constructor.
      * @param array $ipList
      */
-    public function __construct(array $ipList)
+    public function __construct(array $ipList = [])
     {
         $this->ipList = $ipList;
     }
@@ -43,7 +43,7 @@ class IPIterator implements Iterator
         return key($this->ipList);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         if(key($this->ipList) === null){
             $this->rewind();

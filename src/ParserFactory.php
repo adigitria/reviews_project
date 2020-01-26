@@ -14,14 +14,15 @@ use ReviewParser\Parser\ReviewParserInterface;
 
 class ParserFactory
 {
-    public const BANKIRU_ALIAS = 'banki';
+    public const BANKIRU_ALIAS    = 'banki';
     public const IRECOMMEND_ALIAS = 'irecommend';
-    public const OTZOVIK_ALIAS = 'otzovik';
+    public const OTZOVIK_ALIAS    = 'otzovik';
 
     public static function makeParser(Configuration $configuration): ReviewParserInterface
     {
         $requestHelper = new RequestHelper(
             $configuration->getRequestHeaders($configuration->getAlias()),
+            $configuration->getCountAttempts(),
             $configuration->isIpProxyEnable() ? new IPIterator($configuration->getIpList()) : null
         );
 
