@@ -41,6 +41,8 @@ return [
     ],
     'ip' => [
         'enable' => false,
+        'auto_re_download' => false,
+        'count_attempts' => 1,
         'list' => [
             '1.1.1.1.1' => '1111',
         ],
