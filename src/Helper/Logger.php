@@ -5,7 +5,7 @@ namespace ReviewParser\Helper;
 
 class Logger
 {
-    private const INFO_PATTERN = 'INFO: %s ';
+    private const INFO_PATTERN  = 'INFO: %s ';
     private const ERROR_PATTERN = 'ERROR: %s ';
 
     /**
@@ -15,6 +15,7 @@ class Logger
 
     /**
      * Logger constructor.
+     *
      * @param string $logFile
      */
     public function __construct(string $logFile)
@@ -35,6 +36,6 @@ class Logger
     private function addMessage(string $message): void
     {
         $message .= (new \DateTime('now'))->format('Y-m-d H:i:s');
-        file_put_contents($this->logFile, $message.PHP_EOL, FILE_APPEND);
+        file_put_contents($this->logFile, $message . PHP_EOL, FILE_APPEND);
     }
 }

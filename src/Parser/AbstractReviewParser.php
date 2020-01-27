@@ -39,23 +39,25 @@ abstract class AbstractReviewParser implements ReviewParserInterface
      * BankiParser constructor.
      *
      * @param RequestHelper $requestHelper
-     * @param string $baseSearchUrl
-     * @param int $countPages
+     * @param string        $baseSearchUrl
+     * @param int           $countPages
      */
     public function __construct(RequestHelper $requestHelper, string $baseSearchUrl, int $countPages)
     {
         $this->requestHelper = $requestHelper;
         $this->baseSearchUrl = $baseSearchUrl;
-        $this->countPages = $countPages;
+        $this->countPages    = $countPages;
 
-        $this->archiveHelper = new ArchiveHelper($this->getParserAlias(), [
-            'pages' => $this->getPagesHtmlDir(),
+        $this->archiveHelper = new ArchiveHelper(
+            $this->getParserAlias(), [
+            'pages'   => $this->getPagesHtmlDir(),
             'reviews' => $this->getReviewsHtmlDir(),
             'results' => $this->getResultsDir(),
-        ]);
+        ]
+        );
     }
 
-    public function getParsingResult()
+    public function getParsingResult(): void
     {
         $this->archiveHelper->movePreviousToArchive();
 

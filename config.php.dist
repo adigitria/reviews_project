@@ -1,48 +1,50 @@
 <?php
 
 return [
-    'headers' => [
-        'banki' => [
-            'Accept' => '',
+    'headers'        => [
+        'banki'      => [
+            'Accept'          => '',
             'Accept-Language' => '',
-            'Content-Type' => '',
-            'Origin' => '',
-            'Host' => '',
-            'Connection' => '',
-            'Cookie' => '',
+            'Content-Type'    => '',
+            'Origin'          => '',
+            'Host'            => '',
+            'Connection'      => '',
+            'Cookie'          => '',
             'Accept-Encoding' => '',
-            'Referer' => '',
-            'User-Agent' => '',
+            'Referer'         => '',
+            'User-Agent'      => '',
         ],
         'irecommend' => [
-            'Accept' => '',
+            'Accept'          => '',
             'Accept-Language' => '',
-            'Content-Type' => '',
-            'Origin' => '',
-            'Host' => '',
-            'Connection' => '',
-            'Cookie' => '',
+            'Content-Type'    => '',
+            'Origin'          => '',
+            'Host'            => '',
+            'Connection'      => '',
+            'Cookie'          => '',
             'Accept-Encoding' => '',
-            'Referer' => '',
-            'User-Agent' => '',
+            'Referer'         => '',
+            'User-Agent'      => '',
         ],
-        'otzovik' => [
-            'Accept' => '',
+        'otzovik'    => [
+            'Accept'          => '',
             'Accept-Language' => '',
-            'Content-Type' => '',
-            'Origin' => '',
-            'Host' => '',
-            'Connection' => '',
-            'Cookie' => '',
+            'Content-Type'    => '',
+            'Origin'          => '',
+            'Host'            => '',
+            'Connection'      => '',
+            'Cookie'          => '',
             'Accept-Encoding' => '',
-            'Referer' => '',
-            'User-Agent' => '',
-        ]
+            'Referer'         => '',
+            'User-Agent'      => '',
+        ],
     ],
-    'ip' => [
-        'enable' => false,
-        'list' => [
+    'ip'             => [
+        'enable'           => false,
+        'auto_re_download' => false,
+        'list'             => [
             '1.1.1.1.1' => '1111',
         ],
-    ]
+    ],
+    'count_attempts' => 1,
 ];

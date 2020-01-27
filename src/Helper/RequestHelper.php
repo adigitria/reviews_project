@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace ReviewParser\Helper;
 
 use ReviewParser\Exception\ProblemWithDownloadPageException;
-use ReviewParser\Model\IPIterator;
+use ReviewParser\Strategy\IpRoundInterface;
+use ReviewParser\Strategy\StepByStepIpRound;
 
 /**
  * Class RequestHelper
@@ -15,26 +16,35 @@ class RequestHelper
     /**
      * @var array
      */
-    private $headers = [];
+    private $headers;
 
     /**
-     * @var IPIterator
+     * @var IpRoundInterface
      */
-    private $IPIterator;
+    private $ipRoundStrategy;
+
+    /**
+     * @var int
+     */
+    private $countAttempts;
 
     /**
      * RequestHelper constructor.
-     * @param array $headers
-     * @param IPIterator|null $IPIterator
+     *
+     * @param array            $headers
+     * @param int              $countAttempts
+     * @param IpRoundInterface $ipRoundStrategy
      */
-    public function __construct(array $headers, IPIterator $IPIterator = null)
+    public function __construct(array $headers, int $countAttempts = 1, IpRoundInterface $ipRoundStrategy = null)
     {
-        $this->headers = $headers;
-        $this->IPIterator = $IPIterator;
+        $this->headers         = $headers;
+        $this->ipRoundStrategy = $ipRoundStrategy;
+        $this->countAttempts   = $countAttempts;
     }
 
     /**
      * @param string $url
+     *
      * @return array
      */
     public function makeRequest(string $url): array
@@ -42,26 +52,48 @@ class RequestHelper
         $ch = curl_init();
 
         try {
+            $this->makeCurlSettings($url, $ch);
             $error = '';
 
-            $this->makeCurlSettings($url, $ch);
+            for ($i = 0; $i < $this->countAttempts; $i++) {
+                $content = curl_exec($ch);
 
-            $content = curl_exec($ch);
-
-            if (curl_errno($ch) !== 0) {
-                $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                if ($responseCode !== 200) {
-                    $error = 'Got no 200 code. Response code: ' . $responseCode;
-                } else {
-                    $error = 'Curl Error: ' . curl_error($ch);
+                if (curl_errno($ch) !== 0) {
+                    $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    if ($responseCode !== 200) {
+                        $error = 'Got no 200 code. Response code: ' . $responseCode;
+                    } else {
+                        $error = 'Curl Error: ' . curl_error($ch);
+                    }
+                } else if ($content === false) {
+                    $error = 'Could not get an answer from ' . $url;
                 }
-            } elseif ($content === false) {
-                $error = 'Could not get an answer from ' . $url;
+                if ($error === '') {
+                    break;
+                }
             }
+
         } catch (\Throwable $exception) {
             throw new ProblemWithDownloadPageException('Unexpected Error: ' . $exception->getMessage(), $url);
         } finally {
             curl_close($ch);
+        }
+
+        /*
+         * If we got error in response and use StepByStep IpRound strategy
+         * then remove bad IP from IP-collection and if this collection is not empty
+         * try to download content with the next IP.
+         * */
+        if($this->ipRoundStrategy instanceof IpRoundInterface){
+            $iterator = $this->ipRoundStrategy->getIPIterator();
+            if ($error !== '' && $this->ipRoundStrategy instanceof StepByStepIpRound) {
+                $iterator->removeCurrent();
+                if ($iterator->count() > 0) {
+                    list($error, $content) = $this->makeRequest($url);
+                }
+            }else{
+                $iterator->next();
+            }
         }
 
         return [$error, $content];
@@ -69,7 +101,7 @@ class RequestHelper
 
     /**
      * @param string $url
-     * @param $ch
+     * @param        $ch
      */
     protected function makeCurlSettings(string $url, $ch): void
     {
@@ -81,11 +113,11 @@ class RequestHelper
             curl_setopt_array($ch, $this->headers);
         }
 
-        if ($this->IPIterator instanceof IPIterator) {
-            if ($this->IPIterator->valid()) {
-                curl_setopt($ch, CURLOPT_PROXY, $this->IPIterator->getIp());
-                curl_setopt($ch, CURLOPT_PROXYPORT, $this->IPIterator->getPort());
-                $this->IPIterator->next();
+        if ($this->ipRoundStrategy instanceof IpRoundInterface) {
+            $iterator = $this->ipRoundStrategy->getIPIterator();
+            if ($iterator->valid()) {
+                curl_setopt($ch, CURLOPT_PROXY, $iterator->getIp());
+                curl_setopt($ch, CURLOPT_PROXYPORT, $iterator->getPort());
             }
         }
     }
