@@ -46,7 +46,7 @@ class IPIterator implements Iterator
 
     public function valid(): bool
     {
-        if (key($this->ipList) === null) {
+        if ($this->count() > 0 && key($this->ipList) === null) {
             $this->rewind();
         }
 
@@ -63,10 +63,11 @@ class IPIterator implements Iterator
         return count($this->ipList);
     }
 
-    public function removePrev(): void
+    public function removeCurrent(): void
     {
-        prev($this->ipList);
-        unset($this->ipList[$this->key()]);
+//        echo 'Count ip: ' . $this->count() . ' Remove ' . $this->key() . PHP_EOL;
+        $removeKey = $this->key();
         $this->next();
+        unset($this->ipList[$removeKey]);
     }
 }

@@ -73,23 +73,27 @@ class RequestHelper
                 }
             }
 
-            /*
-             * If we got error in response and use StepByStep IpRound strategy
-             * then remove bad IP from IP-collection and if this collection is not empty
-             * try to download content with the next IP.
-             * */
-            if ($error !== '' && $this->ipRoundStrategy instanceof StepByStepIpRound) {
-                $iterator = $this->ipRoundStrategy->getIPIterator();
-                $iterator->removePrev();
-                if ($iterator->count() > 0) {
-                    list($error, $content) = $this->makeRequest($url);
-                }
-            }
-
         } catch (\Throwable $exception) {
             throw new ProblemWithDownloadPageException('Unexpected Error: ' . $exception->getMessage(), $url);
         } finally {
             curl_close($ch);
+        }
+
+        /*
+         * If we got error in response and use StepByStep IpRound strategy
+         * then remove bad IP from IP-collection and if this collection is not empty
+         * try to download content with the next IP.
+         * */
+        if($this->ipRoundStrategy instanceof IpRoundInterface){
+            $iterator = $this->ipRoundStrategy->getIPIterator();
+            if ($error !== '' && $this->ipRoundStrategy instanceof StepByStepIpRound) {
+                $iterator->removeCurrent();
+                if ($iterator->count() > 0) {
+                    list($error, $content) = $this->makeRequest($url);
+                }
+            }else{
+                $iterator->next();
+            }
         }
 
         return [$error, $content];
@@ -114,7 +118,6 @@ class RequestHelper
             if ($iterator->valid()) {
                 curl_setopt($ch, CURLOPT_PROXY, $iterator->getIp());
                 curl_setopt($ch, CURLOPT_PROXYPORT, $iterator->getPort());
-                $iterator->next();
             }
         }
     }
