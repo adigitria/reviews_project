@@ -11,6 +11,9 @@ use ReviewParser\Parser\BankiParser;
 use ReviewParser\Parser\IrecommendParser;
 use ReviewParser\Parser\OtzovikParser;
 use ReviewParser\Parser\ReviewParserInterface;
+use ReviewParser\Strategy\DefaultIpRound;
+use ReviewParser\Strategy\IpRoundInterface;
+use ReviewParser\Strategy\StepByStepIpRound;
 
 class ParserFactory
 {
@@ -23,7 +26,7 @@ class ParserFactory
         $requestHelper = new RequestHelper(
             $configuration->getRequestHeaders($configuration->getAlias()),
             $configuration->getCountAttempts(),
-            $configuration->isIpProxyEnable() ? new IPIterator($configuration->getIpList()) : null
+            self::makeIpStrategy($configuration)
         );
 
         if ($configuration->getAlias() === self::BANKIRU_ALIAS) {
@@ -39,5 +42,20 @@ class ParserFactory
         $parser->setConnectionLog(new Logger('logs/connection.log'));
 
         return $parser;
+    }
+
+    private static function makeIpStrategy(Configuration $configuration): ?IpRoundInterface
+    {
+        $strategy = null;
+        if ($configuration->isIpProxyEnable()) {
+            $ipIterator = new IPIterator($configuration->getIpList());
+            if ($configuration->isAutoReDownload()) {
+                $strategy = new StepByStepIpRound($ipIterator);
+            } else {
+                $strategy = new DefaultIpRound($ipIterator);
+            }
+        }
+
+        return $strategy;
     }
 }

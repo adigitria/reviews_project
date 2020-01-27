@@ -57,7 +57,7 @@ abstract class AbstractReviewParser implements ReviewParserInterface
         );
     }
 
-    public function getParsingResult()
+    public function getParsingResult(): void
     {
         $this->archiveHelper->movePreviousToArchive();
 

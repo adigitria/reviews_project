@@ -11,6 +11,7 @@ class IPIterator implements Iterator
 
     /**
      * IPIterator constructor.
+     *
      * @param array $ipList
      */
     public function __construct(array $ipList = [])
@@ -45,14 +46,27 @@ class IPIterator implements Iterator
 
     public function valid(): bool
     {
-        if(key($this->ipList) === null){
+        if (key($this->ipList) === null) {
             $this->rewind();
         }
+
         return key($this->ipList) !== null;
     }
 
     public function rewind()
     {
         return reset($this->ipList);
+    }
+
+    public function count()
+    {
+        return count($this->ipList);
+    }
+
+    public function removePrev(): void
+    {
+        prev($this->ipList);
+        unset($this->ipList[$this->key()]);
+        $this->next();
     }
 }

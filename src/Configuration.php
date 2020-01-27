@@ -124,7 +124,7 @@ class Configuration
      */
     public function getCountAttempts(): int
     {
-        return $this->config['ip']['count_attempts'];
+        return $this->config['count_attempts'];
     }
 
     /**
