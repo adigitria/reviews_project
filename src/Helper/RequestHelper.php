@@ -116,6 +116,7 @@ class RequestHelper
         if ($this->ipRoundStrategy instanceof IpRoundInterface) {
             $iterator = $this->ipRoundStrategy->getIPIterator();
             if ($iterator->valid()) {
+                echo 'Current IP: '.$iterator->getIp().PHP_EOL;
                 curl_setopt($ch, CURLOPT_PROXY, $iterator->getIp());
                 curl_setopt($ch, CURLOPT_PROXYPORT, $iterator->getPort());
             }
