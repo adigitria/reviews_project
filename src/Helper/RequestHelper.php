@@ -107,6 +107,7 @@ class RequestHelper
     {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 7);
         curl_setopt($ch, CURLOPT_URL, $url);
 
         if (!empty($this->headers)) {
