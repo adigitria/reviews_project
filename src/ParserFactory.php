@@ -47,6 +47,7 @@ class ParserFactory
     private static function makeIpStrategy(Configuration $configuration): ?IpRoundInterface
     {
         $strategy = null;
+        // TODO add behaviors for exlude ip duplicate in step by step
         if ($configuration->isIpProxyEnable()) {
             $ipIterator = new IPIterator($configuration->getIpList());
             if ($configuration->isAutoReDownload()) {
