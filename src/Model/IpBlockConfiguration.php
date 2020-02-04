@@ -11,20 +11,24 @@ namespace ReviewParser\Model;
  */
 class IpBlockConfiguration
 {
+    public const DEFAULT_STRATEGY_TYPE            = 'default';
+    public const STEP_BY_STEP_STRATEGY_TYPE       = 'step_by_step';
+    public const SMART_STEP_BY_STEP_STRATEGY_TYPE = 'smart_step_by_step';
+
     /**
      * @var bool
      */
-    private $enable;
+    private $iBlockEnable;
 
     /**
      * @var array
      */
-    private $list = [];
+    private $list;
 
     /**
-     * @var bool
+     * @var string
      */
-    private $isAutoReDownload;
+    private $strategyType;
 
     /**
      * @var int
@@ -39,9 +43,9 @@ class IpBlockConfiguration
      */
     public function __construct(array $IPConfig)
     {
-        $this->enable            = $IPConfig['enable'];
+        $this->iBlockEnable      = $IPConfig['enable'];
         $this->list              = $IPConfig['list'];
-        $this->isAutoReDownload  = $IPConfig['auto_re_download'];
+        $this->strategyType      = $IPConfig['ip_strategy_type'];
         $this->connectionTimeout = $IPConfig['connection_timeout'];
     }
 
@@ -50,7 +54,7 @@ class IpBlockConfiguration
      */
     public function isIpBlockEnable(): bool
     {
-        return $this->enable;
+        return $this->iBlockEnable;
     }
 
     /**
@@ -62,11 +66,11 @@ class IpBlockConfiguration
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isAutoReDownload(): bool
+    public function getStrategyType(): string
     {
-        return $this->isAutoReDownload;
+        return $this->strategyType;
     }
 
     /**

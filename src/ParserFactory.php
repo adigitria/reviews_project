@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace ReviewParser;
 
+use ReviewParser\Exception\IpRounderStrategyNotFoundException;
 use ReviewParser\Exception\ParserNotFoundException;
 use ReviewParser\Helper\Logger;
 use ReviewParser\Helper\RequestHelper;
+use ReviewParser\Model\IpBlockConfiguration;
 use ReviewParser\Model\IPIterator;
 use ReviewParser\Parser\BankiParser;
 use ReviewParser\Parser\IrecommendParser;
@@ -13,6 +15,7 @@ use ReviewParser\Parser\OtzovikParser;
 use ReviewParser\Parser\ReviewParserInterface;
 use ReviewParser\Strategy\DefaultIpRound;
 use ReviewParser\Strategy\IpRoundInterface;
+use ReviewParser\Strategy\SmartStepByStepIpRound;
 use ReviewParser\Strategy\StepByStepIpRound;
 
 class ParserFactory
@@ -48,12 +51,21 @@ class ParserFactory
     {
         $strategy      = null;
         $ipBlockConfig = $configuration->getIpConfiguration();
+
         if ($ipBlockConfig->isIpBlockEnable()) {
             $ipIterator = new IPIterator($ipBlockConfig->getList());
-            if ($ipBlockConfig->isAutoReDownload()) {
-                $strategy = new StepByStepIpRound($ipIterator, $ipBlockConfig);
-            } else {
-                $strategy = new DefaultIpRound($ipIterator, $ipBlockConfig);
+            switch ($ipBlockConfig->getStrategyType()) {
+                case IpBlockConfiguration::DEFAULT_STRATEGY_TYPE:
+                    $strategy = new DefaultIpRound($ipIterator, $ipBlockConfig);
+                    break;
+                case IpBlockConfiguration::STEP_BY_STEP_STRATEGY_TYPE:
+                    $strategy = new StepByStepIpRound($ipIterator, $ipBlockConfig);
+                    break;
+                case IpBlockConfiguration::SMART_STEP_BY_STEP_STRATEGY_TYPE:
+                    $strategy = new SmartStepByStepIpRound($ipIterator, $ipBlockConfig);
+                    break;
+                default:
+                    throw new IpRounderStrategyNotFoundException(IpRounderStrategyNotFoundException::ERROR_MESSAGE);
             }
         }
 

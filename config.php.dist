@@ -41,7 +41,7 @@ return [
     ],
     'ip'             => [
         'enable'           => false,
-        'auto_re_download' => false,
+        'ip_strategy_type'   => 'default', // can be one from {default, step_by_step, smart_step_by_step}
         'list'             => [
             '1.1.1.1.1' => '1111',
         ],
