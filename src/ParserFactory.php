@@ -46,14 +46,14 @@ class ParserFactory
 
     private static function makeIpStrategy(Configuration $configuration): ?IpRoundInterface
     {
-        $strategy = null;
-        // TODO add behaviors for exlude ip duplicate in step by step
-        if ($configuration->isIpProxyEnable()) {
-            $ipIterator = new IPIterator($configuration->getIpList());
-            if ($configuration->isAutoReDownload()) {
-                $strategy = new StepByStepIpRound($ipIterator);
+        $strategy      = null;
+        $ipBlockConfig = $configuration->getIpConfiguration();
+        if ($ipBlockConfig->isIpBlockEnable()) {
+            $ipIterator = new IPIterator($ipBlockConfig->getList());
+            if ($ipBlockConfig->isAutoReDownload()) {
+                $strategy = new StepByStepIpRound($ipIterator, $ipBlockConfig);
             } else {
-                $strategy = new DefaultIpRound($ipIterator);
+                $strategy = new DefaultIpRound($ipIterator, $ipBlockConfig);
             }
         }
 

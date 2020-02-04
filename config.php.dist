@@ -45,6 +45,7 @@ return [
         'list'             => [
             '1.1.1.1.1' => '1111',
         ],
+        'connection_timeout' => 30,
     ],
     'count_attempts' => 1,
 ];
