@@ -3,11 +3,16 @@ declare(strict_types=1);
 
 namespace ReviewParser\Model;
 
-use \Iterator;
+use Iterator;
 
 class IPIterator implements Iterator
 {
     private $ipList;
+
+    /**
+     * @var int
+     */
+    private $iterationCount = 1;
 
     /**
      * IPIterator constructor.
@@ -47,6 +52,7 @@ class IPIterator implements Iterator
     public function valid(): bool
     {
         if ($this->count() > 0 && key($this->ipList) === null) {
+            $this->iterationCount++;
             $this->rewind();
         }
 
@@ -69,5 +75,13 @@ class IPIterator implements Iterator
         $removeKey = $this->key();
         $this->next();
         unset($this->ipList[$removeKey]);
+    }
+
+    /**
+     * @return int
+     */
+    public function getIterationCount(): int
+    {
+        return $this->iterationCount;
     }
 }

@@ -9,22 +9,43 @@ use ReviewParser\Model\IPIterator;
 class SmartStepByStepIpRounder extends AbstractIpRounder
 {
     private const CONNECTION_TIMOUT_MULTIPLIER = 1.5;
+    private const COUNT_FAIL_ATTEMPTS          = 3;
 
     /**
      * @var int
      */
     private $minimalSizeIpList;
 
-    /**
-     * @var int
-     */
-    private $iterationCount = 0;
+    private $countErrors = [];
+
 
     public function __construct(IPIterator $IPIterator, IpBlockConfiguration $ipBlockConfiguration)
     {
         parent::__construct($IPIterator, $ipBlockConfiguration);
-        $this->minimalSizeIpList = (int) ceil($IPIterator->count() * 0.1);
+        $this->minimalSizeIpList = (int) ceil($IPIterator->count() * 0.2);
     }
+
+    public function nextElementByError(string $error): void
+    {
+        if ($error !== '') {
+            if(isset($this->countErrors[$this->IPIterator->getIp()])){
+                $this->countErrors[$this->IPIterator->getIp()]++;
+            }else{
+                $this->countErrors[$this->IPIterator->getIp()] = 1;
+            }
+
+            if ($this->countErrors[$this->IPIterator->getIp()] > self::COUNT_FAIL_ATTEMPTS
+                || $this->IPIterator->count() > $this->getMinimalSizeIpList()
+            ) {
+                $this->IPIterator->removeCurrent();
+            } else {
+                $this->IPIterator->next();
+            }
+        } else {
+            $this->IPIterator->next();
+        }
+    }
+
 
     /**
      * @return int
@@ -39,8 +60,8 @@ class SmartStepByStepIpRounder extends AbstractIpRounder
      */
     public function getResponseTimeout(): int
     {
-        $this->iterationCount++;
-
-        return (int) self::CONNECTION_TIMOUT_MULTIPLIER * $this->ipBlockConfiguration->getConnectionTimeout() * $this->iterationCount;
+        return (int) self::CONNECTION_TIMOUT_MULTIPLIER
+            * $this->ipBlockConfiguration->getConnectionTimeout()
+            * $this->getIPIterator()->getIterationCount();
     }
 }

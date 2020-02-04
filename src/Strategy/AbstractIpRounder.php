@@ -26,4 +26,9 @@ abstract class AbstractIpRounder implements IpRounderInterface
     {
         return $this->ipBlockConfiguration->getConnectionTimeout();
     }
+
+    public function nextElementByError(string $error): void
+    {
+        $this->IPIterator->next();
+    }
 }

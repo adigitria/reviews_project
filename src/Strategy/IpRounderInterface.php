@@ -13,4 +13,6 @@ interface IpRounderInterface
     public function getIpBlockConfiguration(): IpBlockConfiguration;
 
     public function getResponseTimeout(): int;
+
+    public function nextElementByError(string $error): void;
 }

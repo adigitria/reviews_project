@@ -87,21 +87,10 @@ class RequestHelper
          * */
         if ($this->ipRoundStrategy instanceof IpRounderInterface) {
             $iterator = $this->ipRoundStrategy->getIPIterator();
-            if ($error !== '') {
-                if ($this->ipRoundStrategy instanceof StepByStepIpRounder) {
-                    $iterator->removeCurrent();
-                    if ($iterator->count() > 0) {
-                        [$error, $content] = $this->makeRequest($url);
-                    }
-                } else if ($this->ipRoundStrategy instanceof SmartStepByStepIpRounder) {
-                    if ($iterator->count() > $this->ipRoundStrategy->getMinimalSizeIpList()) {
-                        $iterator->removeCurrent();
-                    } else {
-                        $iterator->next();
-                    }
-                    if ($iterator->count() > 0) {
-                        [$error, $content] = $this->makeRequest($url);
-                    }
+            if ($this->ipRoundStrategy instanceof StepByStepIpRounder | $this->ipRoundStrategy instanceof SmartStepByStepIpRounder) {
+                $this->ipRoundStrategy->nextElementByError($error);
+                if ($iterator->count() > 0) {
+                    [$error, $content] = $this->makeRequest($url);
                 }
             } else {
                 $iterator->next();
@@ -129,7 +118,8 @@ class RequestHelper
         if ($this->ipRoundStrategy instanceof IpRounderInterface) {
             $iterator = $this->ipRoundStrategy->getIPIterator();
             if ($iterator->valid()) {
-                echo 'Current IP: ' . $iterator->getIp() . PHP_EOL;
+                echo 'Current IP: ' . $iterator->getIp();
+                echo ' Current timout: ' . $this->ipRoundStrategy->getResponseTimeout() . PHP_EOL;
                 curl_setopt($ch, CURLOPT_PROXY, $iterator->getIp());
                 curl_setopt($ch, CURLOPT_PROXYPORT, $iterator->getPort());
             }
