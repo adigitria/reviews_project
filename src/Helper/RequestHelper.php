@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace ReviewParser\Helper;
 
 use ReviewParser\Exception\ProblemWithDownloadPageException;
-use ReviewParser\Strategy\IpRoundInterface;
-use ReviewParser\Strategy\StepByStepIpRound;
+use ReviewParser\Strategy\IpRounderInterface;
+use ReviewParser\Strategy\SmartStepByStepIpRounder;
+use ReviewParser\Strategy\StepByStepIpRounder;
 
 /**
  * Class RequestHelper
@@ -19,7 +20,7 @@ class RequestHelper
     private $headers;
 
     /**
-     * @var IpRoundInterface
+     * @var IpRounderInterface
      */
     private $ipRoundStrategy;
 
@@ -31,11 +32,11 @@ class RequestHelper
     /**
      * RequestHelper constructor.
      *
-     * @param array            $headers
-     * @param int              $countAttempts
-     * @param IpRoundInterface $ipRoundStrategy
+     * @param array              $headers
+     * @param int                $countAttempts
+     * @param IpRounderInterface $ipRoundStrategy
      */
-    public function __construct(array $headers, int $countAttempts = 1, IpRoundInterface $ipRoundStrategy = null)
+    public function __construct(array $headers, int $countAttempts = 1, IpRounderInterface $ipRoundStrategy = null)
     {
         $this->headers         = $headers;
         $this->ipRoundStrategy = $ipRoundStrategy;
@@ -84,14 +85,25 @@ class RequestHelper
          * then remove bad IP from IP-collection and if this collection is not empty
          * try to download content with the next IP.
          * */
-        if($this->ipRoundStrategy instanceof IpRoundInterface){
+        if ($this->ipRoundStrategy instanceof IpRounderInterface) {
             $iterator = $this->ipRoundStrategy->getIPIterator();
-            if ($error !== '' && $this->ipRoundStrategy instanceof StepByStepIpRound) {
-                $iterator->removeCurrent();
-                if ($iterator->count() > 0) {
-                    list($error, $content) = $this->makeRequest($url);
+            if ($error !== '') {
+                if ($this->ipRoundStrategy instanceof StepByStepIpRounder) {
+                    $iterator->removeCurrent();
+                    if ($iterator->count() > 0) {
+                        [$error, $content] = $this->makeRequest($url);
+                    }
+                } else if ($this->ipRoundStrategy instanceof SmartStepByStepIpRounder) {
+                    if ($iterator->count() > $this->ipRoundStrategy->getMinimalSizeIpList()) {
+                        $iterator->removeCurrent();
+                    } else {
+                        $iterator->next();
+                    }
+                    if ($iterator->count() > 0) {
+                        [$error, $content] = $this->makeRequest($url);
+                    }
                 }
-            }else{
+            } else {
                 $iterator->next();
             }
         }
@@ -107,17 +119,17 @@ class RequestHelper
     {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->ipRoundStrategy->getIpBlockConfiguration()->getConnectionTimeout());
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->ipRoundStrategy->getResponseTimeout());
         curl_setopt($ch, CURLOPT_URL, $url);
 
         if (!empty($this->headers)) {
             curl_setopt_array($ch, $this->headers);
         }
 
-        if ($this->ipRoundStrategy instanceof IpRoundInterface) {
+        if ($this->ipRoundStrategy instanceof IpRounderInterface) {
             $iterator = $this->ipRoundStrategy->getIPIterator();
             if ($iterator->valid()) {
-                echo 'Current IP: '.$iterator->getIp().PHP_EOL;
+                echo 'Current IP: ' . $iterator->getIp() . PHP_EOL;
                 curl_setopt($ch, CURLOPT_PROXY, $iterator->getIp());
                 curl_setopt($ch, CURLOPT_PROXYPORT, $iterator->getPort());
             }

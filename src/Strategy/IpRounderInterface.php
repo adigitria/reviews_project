@@ -6,9 +6,11 @@ namespace ReviewParser\Strategy;
 use ReviewParser\Model\IpBlockConfiguration;
 use ReviewParser\Model\IPIterator;
 
-interface IpRoundInterface
+interface IpRounderInterface
 {
     public function getIPIterator(): IPIterator;
 
     public function getIpBlockConfiguration(): IpBlockConfiguration;
+
+    public function getResponseTimeout(): int;
 }

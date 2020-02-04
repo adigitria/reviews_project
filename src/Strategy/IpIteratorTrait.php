@@ -11,24 +11,12 @@ trait IpIteratorTrait
     /**
      * @var IPIterator
      */
-    private $IPIterator;
+    protected $IPIterator;
 
     /**
      * @var IpBlockConfiguration
      */
-    private $ipBlockConfiguration;
-
-    /**
-     * StepByStepIpRound constructor.
-     *
-     * @param IPIterator           $IPIterator
-     * @param IpBlockConfiguration $ipBlockConfiguration
-     */
-    public function __construct(IPIterator $IPIterator, IpBlockConfiguration $ipBlockConfiguration)
-    {
-        $this->IPIterator = $IPIterator;
-        $this->ipBlockConfiguration = $ipBlockConfiguration;
-    }
+    protected $ipBlockConfiguration;
 
     /**
      * @return IPIterator
