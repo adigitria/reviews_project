@@ -10,6 +10,7 @@ class SmartStepByStepIpRounder extends AbstractIpRounder
 {
     private const CONNECTION_TIMOUT_MULTIPLIER = 1.5;
     private const COUNT_FAIL_ATTEMPTS          = 3;
+    private const PERCENT_MINIMAL_SIZE         = 10;
 
     /**
      * @var int
@@ -22,7 +23,7 @@ class SmartStepByStepIpRounder extends AbstractIpRounder
     public function __construct(IPIterator $IPIterator, IpBlockConfiguration $ipBlockConfiguration)
     {
         parent::__construct($IPIterator, $ipBlockConfiguration);
-        $this->minimalSizeIpList = (int) ceil($IPIterator->count() * 0.2);
+        $this->minimalSizeIpList = (int) ceil($IPIterator->count() * self::PERCENT_MINIMAL_SIZE/100);
     }
 
     public function nextElementByError(string $error): void
