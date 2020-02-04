@@ -17,13 +17,16 @@ class SmartStepByStepIpRounder extends AbstractIpRounder
      */
     private $minimalSizeIpList;
 
+    /**
+     * @var array
+     */
     private $countErrors = [];
 
 
     public function __construct(IPIterator $IPIterator, IpBlockConfiguration $ipBlockConfiguration)
     {
         parent::__construct($IPIterator, $ipBlockConfiguration);
-        $this->minimalSizeIpList = (int) ceil($IPIterator->count() * self::PERCENT_MINIMAL_SIZE/100);
+        $this->minimalSizeIpList = (int) ceil($IPIterator->count() * (self::PERCENT_MINIMAL_SIZE/100));
     }
 
     public function nextElementByError(string $error): void
@@ -36,8 +39,9 @@ class SmartStepByStepIpRounder extends AbstractIpRounder
             }
 
             if ($this->countErrors[$this->IPIterator->getIp()] > self::COUNT_FAIL_ATTEMPTS
-                || $this->IPIterator->count() > $this->getMinimalSizeIpList()
+                || $this->IPIterator->count() >= $this->getMinimalSizeIpList()
             ) {
+//                echo 'Remove '.$this->IPIterator->getIp().PHP_EOL;
                 $this->IPIterator->removeCurrent();
             } else {
                 $this->IPIterator->next();
