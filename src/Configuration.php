@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ReviewParser;
 
 use ReviewParser\Exception\InvalidArgumentException;
+use ReviewParser\Model\IpBlockConfiguration;
 
 /**
  * Class Configuration
@@ -32,6 +33,11 @@ class Configuration
     private $countPages;
 
     /**
+     * @var IpBlockConfiguration
+     */
+    private $ipConfiguration;
+
+    /**
      * Configuration constructor.
      *
      * @param array $argv
@@ -39,7 +45,8 @@ class Configuration
      */
     public function __construct(array $argv, array $config)
     {
-        $this->config = $config;
+        $this->config          = $config;
+        $this->ipConfiguration = new IpBlockConfiguration($config['ip']);
         $this->setUrlAndParserAlias($argv);
         $this->setCountPages($argv);
     }
@@ -104,19 +111,11 @@ class Configuration
     }
 
     /**
-     * @return bool
+     * @return IpBlockConfiguration
      */
-    public function isIpProxyEnable(): bool
+    public function getIpConfiguration(): IpBlockConfiguration
     {
-        return $this->config['ip']['enable'];
-    }
-
-    /**
-     * @return array
-     */
-    public function getIpList(): array
-    {
-        return $this->config['ip']['list'];
+        return $this->ipConfiguration;
     }
 
     /**
@@ -125,14 +124,6 @@ class Configuration
     public function getCountAttempts(): int
     {
         return $this->config['count_attempts'];
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAutoReDownload(): bool
-    {
-        return $this->config['ip']['auto_re_download'];
     }
 
     /**

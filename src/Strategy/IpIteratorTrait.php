@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ReviewParser\Strategy;
 
+use ReviewParser\Model\IpBlockConfiguration;
 use ReviewParser\Model\IPIterator;
 
 trait IpIteratorTrait
@@ -10,17 +11,12 @@ trait IpIteratorTrait
     /**
      * @var IPIterator
      */
-    private $IPIterator;
+    protected $IPIterator;
 
     /**
-     * StepByStepIpRound constructor.
-     *
-     * @param IPIterator $IPIterator
+     * @var IpBlockConfiguration
      */
-    public function __construct(IPIterator $IPIterator)
-    {
-        $this->IPIterator = $IPIterator;
-    }
+    protected $ipBlockConfiguration;
 
     /**
      * @return IPIterator
@@ -29,4 +25,14 @@ trait IpIteratorTrait
     {
         return $this->IPIterator;
     }
+
+    /**
+     * @return IpBlockConfiguration
+     */
+    public function getIpBlockConfiguration(): IpBlockConfiguration
+    {
+        return $this->ipBlockConfiguration;
+    }
+
+
 }
