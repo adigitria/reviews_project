@@ -108,7 +108,6 @@ class RequestHelper
     {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->ipRoundStrategy->getResponseTimeout());
         curl_setopt($ch, CURLOPT_URL, $url);
 
         if (!empty($this->headers)) {
@@ -116,6 +115,8 @@ class RequestHelper
         }
 
         if ($this->ipRoundStrategy instanceof IpRounderInterface) {
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->ipRoundStrategy->getResponseTimeout());
+
             $iterator = $this->ipRoundStrategy->getIPIterator();
             if ($iterator->valid()) {
                 echo 'Current IP: ' . $iterator->getIp();
