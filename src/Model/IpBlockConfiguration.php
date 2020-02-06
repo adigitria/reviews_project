@@ -44,9 +44,14 @@ class IpBlockConfiguration
     public function __construct(array $IPConfig)
     {
         $this->iBlockEnable      = $IPConfig['enable'];
-        $this->list              = $IPConfig['list'];
         $this->strategyType      = $IPConfig['ip_strategy_type'];
         $this->connectionTimeout = $IPConfig['connection_timeout'];
+
+        $ipList = $IPConfig['list'];
+        uksort($ipList, function () {
+            return rand() > rand();
+        });
+        $this->list = $ipList;
     }
 
     /**
