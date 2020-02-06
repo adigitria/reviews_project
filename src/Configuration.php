@@ -30,7 +30,12 @@ class Configuration
     /**
      * @var int
      */
-    private $countPages;
+    private $finalPageNumber;
+
+    /**
+     * @var int
+     */
+    private $startPageNumber = 1;
 
     /**
      * @var IpBlockConfiguration
@@ -48,7 +53,8 @@ class Configuration
         $this->config          = $config;
         $this->ipConfiguration = new IpBlockConfiguration($config['ip']);
         $this->setUrlAndParserAlias($argv);
-        $this->setCountPages($argv);
+        $this->setStartPageNumber($argv);
+        $this->setFinalPageNumber($argv);
     }
 
     /**
@@ -105,9 +111,17 @@ class Configuration
     /**
      * @return int
      */
-    public function getCountPages(): int
+    public function getFinalPageNumber(): int
     {
-        return $this->countPages;
+        return $this->finalPageNumber;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartPageNumber(): int
+    {
+        return $this->startPageNumber;
     }
 
     /**
@@ -148,12 +162,26 @@ class Configuration
     /**
      * @param array $argv
      */
-    protected function setCountPages(array $argv): void
+    protected function setFinalPageNumber(array $argv): void
     {
         if (isset($argv[2])) {
-            $this->countPages = (int) $argv[2];
+            if(isset($argv[3])){
+                $this->finalPageNumber = (int) $argv[3];
+            }else{
+                $this->finalPageNumber = (int) $argv[2];
+            }
         } else {
             throw new InvalidArgumentException('CountPages argument is empty.');
+        }
+    }
+
+    /**
+     * @param array $argv
+     */
+    public function setStartPageNumber(array $argv): void
+    {
+        if (isset($argv[2], $argv[3])) {
+            $this->startPageNumber = (int) $argv[2];
         }
     }
 }
