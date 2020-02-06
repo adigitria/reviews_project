@@ -88,7 +88,7 @@ class IrecommendParser extends AbstractReviewParser
             }
         }
 
-        file_put_contents($this->getResultsDir() . '/irecommend_reviews.json', json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        file_put_contents($this->getResultsDir() . '/'.$this->getResultFileName(), json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
     }
 

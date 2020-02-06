@@ -116,6 +116,11 @@ abstract class AbstractReviewParser implements ReviewParserInterface
         return 'results/' . $this->getParserAlias();
     }
 
+    protected function getResultFileName(): string
+    {
+        return $this->getParserAlias().'_reviews_'.$this->startPageNumber.'_'.$this->finalPageNumber.'.json';
+    }
+
     abstract protected function getBaseSiteUrl(): string;
 
     abstract protected function pagesParsing();
