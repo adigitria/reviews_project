@@ -33,11 +33,11 @@ class ParserFactory
         );
 
         if ($configuration->getAlias() === self::BANKIRU_ALIAS) {
-            $parser = new BankiParser($requestHelper, $configuration->getBaseSearchUrl(), $configuration->getCountPages());
+            $parser = new BankiParser($requestHelper, $configuration->getBaseSearchUrl(), $configuration->getStartPageNumber(), $configuration->getFinalPageNumber());
         } else if ($configuration->getAlias() === self::IRECOMMEND_ALIAS) {
-            $parser = new IrecommendParser($requestHelper, $configuration->getBaseSearchUrl(), $configuration->getCountPages());
+            $parser = new IrecommendParser($requestHelper, $configuration->getBaseSearchUrl(), $configuration->getStartPageNumber(), $configuration->getFinalPageNumber());
         } else if ($configuration->getAlias() === self::OTZOVIK_ALIAS) {
-            $parser = new OtzovikParser($requestHelper, $configuration->getBaseSearchUrl(), $configuration->getCountPages());
+            $parser = new OtzovikParser($requestHelper, $configuration->getBaseSearchUrl(), $configuration->getStartPageNumber(), $configuration->getFinalPageNumber());
         } else {
             throw new ParserNotFoundException(ParserNotFoundException::ERROR_MESSAGE);
         }

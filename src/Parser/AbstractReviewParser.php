@@ -23,7 +23,7 @@ abstract class AbstractReviewParser implements ReviewParserInterface
     /**
      * @var int
      */
-    protected $countPages;
+    protected $finalPageNumber;
 
     /**
      * @var ArchiveHelper
@@ -36,17 +36,24 @@ abstract class AbstractReviewParser implements ReviewParserInterface
     protected $connectionLog;
 
     /**
+     * @var int
+     */
+    protected $startPageNumber;
+
+    /**
      * BankiParser constructor.
      *
      * @param RequestHelper $requestHelper
      * @param string        $baseSearchUrl
-     * @param int           $countPages
+     * @param int           $startPageNumber
+     * @param int           $finalPageNumber
      */
-    public function __construct(RequestHelper $requestHelper, string $baseSearchUrl, int $countPages)
+    public function __construct(RequestHelper $requestHelper, string $baseSearchUrl, int $startPageNumber, int $finalPageNumber)
     {
-        $this->requestHelper = $requestHelper;
-        $this->baseSearchUrl = $baseSearchUrl;
-        $this->countPages    = $countPages;
+        $this->requestHelper   = $requestHelper;
+        $this->baseSearchUrl   = $baseSearchUrl;
+        $this->startPageNumber = $startPageNumber;
+        $this->finalPageNumber = $finalPageNumber;
 
         $this->archiveHelper = new ArchiveHelper(
             $this->getParserAlias(), [
@@ -82,7 +89,7 @@ abstract class AbstractReviewParser implements ReviewParserInterface
 
     protected function safeGetContentByCurl(string $url): string
     {
-        list($error, $content) = $this->requestHelper->makeRequest($url);
+        [$error, $content] = $this->requestHelper->makeRequest($url);
 
         if ($error !== '') {
             throw new ProblemWithDownloadPageException($error, $url);
