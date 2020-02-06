@@ -120,6 +120,7 @@ class RequestHelper
             $iterator = $this->ipRoundStrategy->getIPIterator();
             if ($iterator->valid()) {
                 echo 'Current IP: ' . $iterator->getIp();
+                echo ' Current PORT: ' . $iterator->getPort();
                 echo ' Current timout: ' . $this->ipRoundStrategy->getResponseTimeout() . PHP_EOL;
                 curl_setopt($ch, CURLOPT_PROXY, $iterator->getIp());
                 curl_setopt($ch, CURLOPT_PROXYPORT, $iterator->getPort());
