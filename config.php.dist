@@ -15,16 +15,27 @@ return [
             'User-Agent' => '',
         ],
         'irecommend' => [
-            'Accept' => '',
-            'Accept-Language' => '',
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language' => 'en-gb',
             'Content-Type' => '',
             'Origin' => '',
-            'Host' => '',
+            'Host' => 'irecommend.ru',
             'Connection' => '',
-            'Cookie' => '',
-            'Accept-Encoding' => '',
+            'Cookie' => sprintf('statsactivity=7; statstimer=18; _ym_visorc_59%d=w; ' .
+                '_ym_isad=2; _gat=1; _ym_uid=1579725006702087%d; ss_uid=15811913263294%d; ' .
+                'stats_s_a=dAKet7ibLQRI4UUiDBaFW0ZllLM%dHIvzYpYKe4IiNAJ7II%s; ' .
+                'stats_u_a=YsuLYDHOWsF9avMj9v1UDlaTPG3bfWQacTtx%sBFgXOFotkBUXE4aKoKeK1Sq%dLVVH7fNh6VCLOvq; ab_var=5',
+                rand(101,400),
+                rand(101,500),
+                rand(101,600),
+                rand(10,99),
+                '%2FUeQYY9SHWOET6Vilb%2BIzV7tMJcptlSBFwLWC2HAuh81s1cR9vx%2F4NKdopQ4%3D',
+                '%2BJCpzgwonIlWNvLelSk1%2',
+                rand(10,99)
+            ),
+            'Accept-Encoding' => 'gzip, deflate, br',
             'Referer' => '',
-            'User-Agent' => '',
+            'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.1',
         ],
         'otzovik' => [
             'Accept' => '',
