@@ -206,7 +206,7 @@ return [
             '93.185.96.62' => '41003',
             '82.207.41.135' => '55126',
         ],
-        'connection_timeout' => 10,
+        'connection_timeout' => 15,
     ],
     'count_attempts' => 1,
 ];
