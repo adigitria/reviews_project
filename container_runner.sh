@@ -7,7 +7,7 @@ step=$(( countPage / countProject ))
 for (( i=1; i <= $countProject; i++ ))
 do
   project_number=$(( i - 1 ))
-  cd ~/review_project_$project_number
+  cd ~/reviews_project_$project_number
   if [ $i -eq $countProject ]
   then
   finalPage=$countPage
