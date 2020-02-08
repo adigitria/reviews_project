@@ -8,7 +8,7 @@ use ReviewParser\Model\IPIterator;
 
 class SmartStepByStepIpRounder extends AbstractIpRounder
 {
-    private const CONNECTION_TIMOUT_MULTIPLIER = 1.5;
+    private const CONNECTION_TIMOUT_MULTIPLIER = 1.15;
     private const COUNT_FAIL_ATTEMPTS          = 3;
     private const PERCENT_MINIMAL_SIZE         = 10;
 
