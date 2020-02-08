@@ -69,6 +69,7 @@ class RequestHelper
                 } else if ($content === false) {
                     $error = 'Could not get an answer from ' . $url;
                 }
+
                 if ($error === '') {
                     break;
                 }
@@ -87,7 +88,7 @@ class RequestHelper
          * */
         if ($this->ipRoundStrategy instanceof IpRounderInterface) {
             $iterator = $this->ipRoundStrategy->getIPIterator();
-            if ($this->ipRoundStrategy instanceof StepByStepIpRounder | $this->ipRoundStrategy instanceof SmartStepByStepIpRounder) {
+            if ($error !== '' && ($this->ipRoundStrategy instanceof StepByStepIpRounder | $this->ipRoundStrategy instanceof SmartStepByStepIpRounder)) {
                 $this->ipRoundStrategy->nextElementByError($error);
                 if ($iterator->count() > 0) {
                     [$error, $content] = $this->makeRequest($url);
@@ -119,11 +120,14 @@ class RequestHelper
 
             $iterator = $this->ipRoundStrategy->getIPIterator();
             if ($iterator->valid()) {
-                echo 'Current IP: ' . $iterator->getIp();
-                echo ' Current PORT: ' . $iterator->getPort();
+                $ip = $iterator->getIp();
+                $port = $iterator->getPort();
+                echo 'Url ' . $url;
+                echo ' Current IP: ' . $ip;
+                echo ' Current PORT: ' . $port;
                 echo ' Current timout: ' . $this->ipRoundStrategy->getResponseTimeout() . PHP_EOL;
-                curl_setopt($ch, CURLOPT_PROXY, $iterator->getIp());
-                curl_setopt($ch, CURLOPT_PROXYPORT, $iterator->getPort());
+                curl_setopt($ch, CURLOPT_PROXY, $ip);
+                curl_setopt($ch, CURLOPT_PROXYPORT, $port);
             }
         }
     }

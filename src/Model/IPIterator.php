@@ -26,12 +26,12 @@ class IPIterator implements Iterator
 
     public function getIp()
     {
-        return $this->key();
+        return trim($this->key());
     }
 
     public function getPort()
     {
-        return $this->current();
+        return trim($this->current());
     }
 
     public function current()

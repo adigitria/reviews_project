@@ -31,22 +31,17 @@ class SmartStepByStepIpRounder extends AbstractIpRounder
 
     public function nextElementByError(string $error): void
     {
-        if ($error !== '') {
-            echo $error.PHP_EOL;
-            if(isset($this->countErrors[$this->IPIterator->getIp()])){
-                $this->countErrors[$this->IPIterator->getIp()]++;
-            }else{
-                $this->countErrors[$this->IPIterator->getIp()] = 1;
-            }
+        if (isset($this->countErrors[$this->IPIterator->getIp()])) {
+            $this->countErrors[$this->IPIterator->getIp()]++;
+        } else {
+            $this->countErrors[$this->IPIterator->getIp()] = 1;
+        }
 
-            if ($this->countErrors[$this->IPIterator->getIp()] > self::COUNT_FAIL_ATTEMPTS
-                || $this->IPIterator->count() >= $this->getMinimalSizeIpList()
-            ) {
+        if ($this->countErrors[$this->IPIterator->getIp()] > self::COUNT_FAIL_ATTEMPTS
+            || $this->IPIterator->count() >= $this->getMinimalSizeIpList()
+        ) {
 //                echo 'Remove '.$this->IPIterator->getIp().PHP_EOL;
-                $this->IPIterator->removeCurrent();
-            } else {
-                $this->IPIterator->next();
-            }
+            $this->IPIterator->removeCurrent();
         } else {
             $this->IPIterator->next();
         }
