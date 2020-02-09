@@ -61,8 +61,6 @@ class SmartStepByStepIpRounder extends AbstractIpRounder
      */
     public function getResponseTimeout(): int
     {
-        return (int) self::CONNECTION_TIMOUT_MULTIPLIER
-            * $this->ipBlockConfiguration->getConnectionTimeout()
-            * $this->getIPIterator()->getIterationCount();
+        return (int) $this->ipBlockConfiguration->getConnectionTimeout();
     }
 }
