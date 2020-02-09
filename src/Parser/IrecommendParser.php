@@ -12,6 +12,10 @@ class IrecommendParser extends AbstractReviewParser
         $baseSearchPage = $this->baseSearchUrl . '?page=';
         $linksPattern   = '/<a href=\"([^"]+)\" class=\"more\"><\/a>/';
 
+        // peculiarity Irecommend - start with "0" number of page
+        $this->startPageNumber--;
+        $this->finalPageNumber--;
+
         for ($i = $this->startPageNumber; $i <= $this->finalPageNumber; $i++) {
             $pageContent = $this->safeGetContentByCurl($baseSearchPage . $i);
             preg_match_all($linksPattern, $pageContent, $matches);
