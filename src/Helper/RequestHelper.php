@@ -69,8 +69,12 @@ class RequestHelper
                     }
                 } else if ($content === false) {
                     $error = 'Could not get an answer from ' . $url;
-                } else if ($error === ''){
-                    // TODO move to special parser rules
+                } else if(empty(trim($content))){
+                    $error = 'Empty response was returned.';
+                }
+
+                // TODO move to special parser rules
+                if ($error === ''){
                     $error = $this->ipHealthCheck($content);
                 }
 
