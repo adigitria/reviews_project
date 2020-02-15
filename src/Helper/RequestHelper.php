@@ -143,7 +143,7 @@ class RequestHelper
     {
         $error = '';
 
-        if (strpos($pageContent, 'name="captcha_url"')) {
+        if (strpos($pageContent, 'name="captcha_url"') || strpos($pageContent, '<h1>Access Denied</h1>')) {
             $error = sprintf('IP %s is not valid now.',$this->ipRoundStrategy instanceof IpRounderInterface ? $this->ipRoundStrategy->getIPIterator()->getIp() : 'SELF');
         }
 
