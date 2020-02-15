@@ -144,7 +144,7 @@ class RequestHelper
         $error = '';
 
         if (strpos($pageContent, '<h1>Вы робот?</h1>')) {
-            $error = 'IP is not valid now.';
+            $error = sprintf('IP %s is not valid now.',$this->ipRoundStrategy instanceof IpRounderInterface ? $this->ipRoundStrategy->getIPIterator()->getIp() : 'SELF');
         }
 
         return $error;
