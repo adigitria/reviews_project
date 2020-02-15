@@ -18,7 +18,7 @@ do
   else
   finalPage=$(( startPage + step - 1 ))
   fi
-#  echo $project_number $url $startPage $finalPage
+#  echo "sudo docker-compose run -d --rm app ./runner $url $startPage $finalPage"
   sudo docker-compose run -d --rm app ./runner $url $startPage $finalPage
   startPage=$(( finalPage + 1 ))
 done
