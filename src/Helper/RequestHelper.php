@@ -68,6 +68,9 @@ class RequestHelper
                     }
                 } else if ($content === false) {
                     $error = 'Could not get an answer from ' . $url;
+                } else if ($error === ''){
+                    // TODO move to special parser rules
+                    $error = $this->ipHealthCheck($content);
                 }
 
                 if ($error === '') {
@@ -130,5 +133,20 @@ class RequestHelper
                 curl_setopt($ch, CURLOPT_PROXYPORT, $port);
             }
         }
+    }
+
+    /**
+     * @param string $pageContent
+     * @return string
+     */
+    protected function ipHealthCheck(string $pageContent): string
+    {
+        $error = '';
+
+        if (strpos($pageContent, '<h1>Вы робот?</h1>')) {
+            $error = 'IP is not valid now.';
+        }
+
+        return $error;
     }
 }
