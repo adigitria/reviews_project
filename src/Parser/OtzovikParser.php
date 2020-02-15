@@ -14,6 +14,7 @@ class OtzovikParser extends AbstractReviewParser
             $url = str_replace('%PAGE_NUMBER%', $i, $this->baseSearchUrl . '%PAGE_NUMBER%/');
             $linksPattern = '/\<a class=\"review-title\" href=\"(.+)\" itemprop=\"name\"\>/';
             $pageContent = $this->safeGetContentByCurl($url);
+            file_put_contents($this->getPagesHtmlDir() . '/base_review_' . $i . '.html', $pageContent);
 
             preg_match_all($linksPattern, $pageContent, $matches);
 
