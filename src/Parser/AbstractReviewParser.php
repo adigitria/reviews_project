@@ -89,7 +89,7 @@ abstract class AbstractReviewParser implements ReviewParserInterface
 
     protected function safeGetContentByCurl(string $url): string
     {
-        [$error, $content] = $this->requestHelper->makeRequest($url);
+        [$error, $content] = $this->requestHelper->makeRequest($url,$this->connectionLog);
 
         if ($error !== '') {
             throw new ProblemWithDownloadPageException($error, $url);

@@ -45,10 +45,11 @@ class RequestHelper
 
     /**
      * @param string $url
+     * @param Logger $logger
      *
      * @return array
      */
-    public function makeRequest(string $url): array
+    public function makeRequest(string $url, Logger $logger): array
     {
         $ch = curl_init();
 
@@ -75,6 +76,9 @@ class RequestHelper
 
                 if ($error === '') {
                     break;
+                } else {
+                    echo $error.PHP_EOL;
+                    $logger->addErrorMessage(sprintf('Attempt download %s got error - %s', $url, $error));
                 }
             }
 
@@ -94,7 +98,7 @@ class RequestHelper
             if ($error !== '' && ($this->ipRoundStrategy instanceof StepByStepIpRounder | $this->ipRoundStrategy instanceof SmartStepByStepIpRounder)) {
                 $this->ipRoundStrategy->nextElementByError($error);
                 if ($iterator->count() > 0) {
-                    [$error, $content] = $this->makeRequest($url);
+                    [$error, $content] = $this->makeRequest($url, $logger);
                 }
             } else {
                 $iterator->next();
