@@ -9,15 +9,17 @@ class OtzovikParser extends AbstractReviewParser
 {
     protected function pagesParsing()
     {
+        $mainPagesContent = [];
         for ($i = $this->startPageNumber; $i <= $this->finalPageNumber; $i++) {
-
             $url = str_replace('%PAGE_NUMBER%', $i, $this->baseSearchUrl . '%PAGE_NUMBER%/');
-            $linksPattern = '/\<a class=\"review-title\" href=\"(.+)\" itemprop=\"name\"\>/';
             $pageContent = $this->safeGetContentByCurl($url);
             file_put_contents($this->getPagesHtmlDir() . '/base_review_' . $i . '.html', $pageContent);
+            $mainPagesContent[] = $pageContent;
+        }
 
-            preg_match_all($linksPattern, $pageContent, $matches);
-
+        $linksPattern = '/\<a class=\"review-title\" href=\"(.+)\" itemprop=\"name\"\>/';
+        foreach ($mainPagesContent as $mainPageContent) {
+            preg_match_all($linksPattern, $mainPageContent, $matches);
             foreach ($matches[1] as $index => $reviewPage) {
                 $url = $this->getBaseSiteUrl() . $reviewPage;
                 $content = $this->safeGetContentByCurl($url);
