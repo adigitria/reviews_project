@@ -1,0 +1,19 @@
+{
+    "autoload": {
+        "psr-4": {
+            "ReviewParser\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Unit\\": "tests/unit"
+        }
+    },
+    "require": {
+        "php": ">7.0.0",
+        "ext-curl": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    }
+}
