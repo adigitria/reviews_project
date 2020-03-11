@@ -30,3 +30,9 @@ html blocks of reviews in directory **reviews/**.
 
 Besides, before running of parsing for every sites, make archive with previous results (put in **archive/** directory).
 Each connect to site save in logs (directory **logs/**).
+
+## Develop section
+Run test
+```
+./vendor/bin/phpunit --bootstrap vendor/autoload.php
+``` 
