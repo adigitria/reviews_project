@@ -5,3 +5,4 @@ reviews/*/**.html
 archive/*.zip
 logs/*.log
 /config.php
+vendor
